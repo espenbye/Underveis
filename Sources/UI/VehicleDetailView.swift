@@ -9,6 +9,13 @@ struct VehicleDetailView: View {
     /// Drives the Look Around "ride along" preview, refetching as the vehicle moves.
     @State private var rideAlong = RideAlongModel()
 
+    #if os(iOS)
+        /// The scene shown in the full-screen ride-along viewer (nil when closed). Holding the scene
+        /// that was current at tap time lets the viewer construct with a non-nil scene; it then keeps
+        /// following via the `$rideAlong.scene` binding.
+        @State private var rideAlongFullScreen: RideAlongScene?
+    #endif
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
@@ -26,11 +33,23 @@ struct VehicleDetailView: View {
             rideAlong.reset()
             rideAlong.update(to: vehicle.coordinate, bearing: vehicle.bearing)
         }
-        // Track the vehicle as it moves or turns (throttled inside the model). `CLLocationCoordinate2D`
-        // isn't `Equatable`, so key the change on a lightweight string like `RootView.followKey` does.
-        .onChange(of: "\(vehicle.latitude),\(vehicle.longitude),\(vehicle.bearing ?? -1)") {
+        // Track the vehicle as it moves (throttled inside the model, which derives the view direction
+        // from movement). `CLLocationCoordinate2D` isn't `Equatable`, so key the change on a
+        // lightweight position string like `RootView.followKey` does.
+        .onChange(of: "\(vehicle.latitude),\(vehicle.longitude)") {
             rideAlong.update(to: vehicle.coordinate, bearing: vehicle.bearing)
         }
+        #if os(iOS)
+            // Our own full-screen viewer, so it keeps following the vehicle (the built-in
+            // `LookAroundPreview` viewer can't be driven once it's open).
+            .fullScreenCover(item: $rideAlongFullScreen) { item in
+                RideAlongFullScreenView(
+                    initialScene: item.scene,
+                    scene: $rideAlong.scene,
+                    label: vehicle.lineName ?? vehicle.shortLabel
+                )
+            }
+        #endif
     }
 
     private var header: some View {
@@ -69,7 +88,7 @@ struct VehicleDetailView: View {
             Group {
                 switch rideAlong.availability {
                 case .available where rideAlong.scene != nil:
-                    LookAroundPreview(scene: $rideAlong.scene, badgePosition: .bottomTrailing)
+                    preview
                 case .unavailable:
                     placeholder("Ingen gatebilde her", systemImage: "eye.slash")
                 default:
@@ -80,6 +99,31 @@ struct VehicleDetailView: View {
             .frame(maxWidth: .infinity)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
+    }
+
+    /// The inline thumbnail. On iOS it opens our own tracking full-screen viewer; on macOS the
+    /// system viewer isn't available, so it's a plain preview.
+    @ViewBuilder
+    private var preview: some View {
+        #if os(iOS)
+            Button {
+                if let scene = rideAlong.scene { rideAlongFullScreen = RideAlongScene(scene: scene) }
+            } label: {
+                LookAroundPreview(scene: $rideAlong.scene, allowsNavigation: false, badgePosition: .bottomTrailing)
+                    // Suppress the preview's own tap-to-fullscreen so our button owns the tap.
+                    .allowsHitTesting(false)
+                    .overlay(alignment: .topTrailing) {
+                        Image(systemName: "arrow.up.left.and.arrow.down.right")
+                            .font(.footnote.weight(.semibold))
+                            .padding(7)
+                            .background(.ultraThinMaterial, in: Circle())
+                            .padding(8)
+                    }
+            }
+            .buttonStyle(.plain)
+        #else
+            LookAroundPreview(scene: $rideAlong.scene, badgePosition: .bottomTrailing)
+        #endif
     }
 
     /// Same-sized fill for the preview slot: a centred message, or a spinner while loading.
@@ -136,3 +180,64 @@ struct VehicleDetailView: View {
         return minutes > 0 ? "\(minutes) min forsinket" : "\(-minutes) min før rute"
     }
 }
+
+#if os(iOS)
+    /// Identifiable wrapper so a non-nil scene can drive `fullScreenCover(item:)`.
+    private struct RideAlongScene: Identifiable {
+        let id = UUID()
+        let scene: MKLookAroundScene
+    }
+
+    /// Full-screen Look Around viewer that keeps following the vehicle: the underlying detail view
+    /// stays alive behind the cover and keeps refetching, updating `scene` here in place.
+    private struct RideAlongFullScreenView: View {
+        let initialScene: MKLookAroundScene
+        @Binding var scene: MKLookAroundScene?
+        let label: String
+        @Environment(\.dismiss) private var dismiss
+
+        var body: some View {
+            LookAroundViewer(initialScene: initialScene, scene: $scene)
+                .ignoresSafeArea()
+                .overlay(alignment: .topTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title)
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.white)
+                            .shadow(radius: 3)
+                            .padding()
+                    }
+                    .accessibilityLabel("Lukk")
+                }
+                .overlay(alignment: .topLeading) {
+                    Text(label)
+                        .font(.headline)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 7)
+                        .background(.ultraThinMaterial, in: Capsule())
+                        .padding()
+                }
+        }
+    }
+
+    /// Wraps `MKLookAroundViewController` so the full-screen scene can update live. Only non-nil scene
+    /// changes are applied, so a transient no-coverage fetch keeps the last good imagery on screen.
+    private struct LookAroundViewer: UIViewControllerRepresentable {
+        let initialScene: MKLookAroundScene
+        @Binding var scene: MKLookAroundScene?
+
+        func makeUIViewController(context: Context) -> MKLookAroundViewController {
+            MKLookAroundViewController(scene: initialScene)
+        }
+
+        func updateUIViewController(_ controller: MKLookAroundViewController, context: Context) {
+            if let scene, scene !== controller.scene {
+                controller.scene = scene
+            }
+        }
+    }
+#endif

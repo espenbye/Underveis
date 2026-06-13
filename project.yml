@@ -48,6 +48,12 @@ schemes:
         Underveis: all
     run:
       config: Debug
+      # MapKit's Look Around renderer trips a Metal API Validation assertion
+      # (MTLStoreActionMultisampleResolve … requires resolve texture) when its surface is laid out at
+      # zero size during a sheet/cover transition. It's a validation-layer assert in framework code —
+      # harmless in Release — but it kills debug runs. This app ships no custom Metal, so turning the
+      # validation off costs us nothing.
+      enableGPUValidationMode: disabled
     profile:
       config: Release
     archive:

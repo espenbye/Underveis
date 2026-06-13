@@ -19,25 +19,26 @@ final class RideAlongModel {
     private var request: MKLookAroundSceneRequest?
     private var task: Task<Void, Never>?
     private var lastFetched: CLLocationCoordinate2D?
-    private var lastBearing: Double?
 
-    /// Only refetch once the vehicle has travelled this far (metres)…
+    /// Only refetch once the vehicle has travelled this far (metres). The same displacement also
+    /// gives us a reliable direction of travel, so we don't refetch on bearing changes at all.
     private static let refetchDistance: CLLocationDistance = 40
-    /// …or turned at least this much (degrees), so the view re-aims through corners and stops.
-    private static let refetchBearing: Double = 30
-    /// How far ahead of the vehicle (metres) to aim the Look Around camera — see `lookTarget`.
-    private static let lookAheadDistance: CLLocationDistance = 20
+    /// How far ahead of the vehicle (metres) to aim the Look Around camera — see `lookTarget`. Kept
+    /// well beyond the captured-panorama spacing so the forward vector dominates and the camera
+    /// doesn't flip to face backwards.
+    private static let lookAheadDistance: CLLocationDistance = 60
 
-    /// Called as the followed vehicle moves; a cheap no-op until it has moved past `refetchDistance`
-    /// or turned past `refetchBearing`. `bearing` orients the scene along the direction of travel.
+    /// Called as the followed vehicle moves; a cheap no-op until it has moved past `refetchDistance`.
+    /// `bearing` only seeds the very first fetch — after that the direction comes from real movement.
     func update(to coordinate: CLLocationCoordinate2D, bearing: Double?) {
-        if let last = lastFetched, availability != .idle {
-            let movedFar = CLLocation(coordinate: last)
-                .distance(from: CLLocation(coordinate: coordinate)) >= Self.refetchDistance
-            let turned = Self.bearingDelta(lastBearing, bearing) >= Self.refetchBearing
-            if !movedFar && !turned { return }
+        if let last = lastFetched, availability != .idle,
+            CLLocation(coordinate: last).distance(from: CLLocation(coordinate: coordinate)) < Self.refetchDistance {
+            return
         }
-        fetch(at: coordinate, bearing: bearing)
+        // Direction of travel: prefer the actual displacement since the last fetch (robust, and always
+        // points the way the vehicle is moving); fall back to the reported bearing on the first fetch.
+        let heading = lastFetched.map { Self.bearing(from: $0, to: coordinate) } ?? bearing
+        fetch(at: coordinate, heading: heading)
     }
 
     /// Clears everything — used when the selection switches to a different vehicle or the panel closes.
@@ -48,18 +49,16 @@ final class RideAlongModel {
         request = nil
         scene = nil
         lastFetched = nil
-        lastBearing = nil
         availability = .idle
     }
 
-    private func fetch(at coordinate: CLLocationCoordinate2D, bearing: Double?) {
+    private func fetch(at coordinate: CLLocationCoordinate2D, heading: Double?) {
         task?.cancel()
         request?.cancel()
         lastFetched = coordinate
-        lastBearing = bearing
         if availability == .idle { availability = .loading }
 
-        let request = MKLookAroundSceneRequest(coordinate: Self.lookTarget(from: coordinate, bearing: bearing))
+        let request = MKLookAroundSceneRequest(coordinate: Self.lookTarget(from: coordinate, bearing: heading))
         self.request = request
         task = Task { @MainActor [weak self] in
             // A failed/empty request is treated as "no coverage" (nil) — the same outcome the UI
@@ -84,11 +83,15 @@ final class RideAlongModel {
         return CLLocationCoordinate2D(latitude: coordinate.latitude + dLat, longitude: coordinate.longitude + dLon)
     }
 
-    /// Shortest absolute difference between two headings (degrees), or 0 when either is unknown.
-    private static func bearingDelta(_ a: Double?, _ b: Double?) -> Double {
-        guard let a, let b else { return 0 }
-        let delta = abs((a - b).truncatingRemainder(dividingBy: 360))
-        return delta > 180 ? 360 - delta : delta
+    /// Initial great-circle bearing (degrees) from one coordinate to another — the direction the
+    /// vehicle travelled between two fetches.
+    private static func bearing(from a: CLLocationCoordinate2D, to b: CLLocationCoordinate2D) -> Double {
+        let lat1 = a.latitude * .pi / 180
+        let lat2 = b.latitude * .pi / 180
+        let dLon = (b.longitude - a.longitude) * .pi / 180
+        let y = sin(dLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        return atan2(y, x) * 180 / .pi
     }
 }
 
