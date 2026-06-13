@@ -37,6 +37,9 @@ extension BoundingBox {
         latitude >= minLat && latitude <= maxLat && longitude >= minLon && longitude <= maxLon
     }
 
+    /// North–south extent in degrees — a proxy for zoom level.
+    var latitudeSpan: Double { maxLat - minLat }
+
     /// Rough degrees of diagonal extent — used to decide whether a camera move is big enough to
     /// warrant re-subscribing.
     func approximatelyEquals(_ other: BoundingBox, tolerance: Double) -> Bool {

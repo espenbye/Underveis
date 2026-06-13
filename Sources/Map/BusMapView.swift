@@ -13,6 +13,14 @@ struct BusMapView: View {
 
     var body: some View {
         Map(position: $cameraPosition) {
+            // Stops first so the colourful vehicle markers draw on top of them.
+            ForEach(model.stops) { stop in
+                Annotation(stop.name, coordinate: stop.coordinate) {
+                    StopMarker(stop: stop)
+                }
+                .annotationTitles(.hidden)
+            }
+
             ForEach(model.visibleVehicles) { vehicle in
                 Annotation(vehicle.shortLabel, coordinate: vehicle.coordinate) {
                     VehicleMarker(

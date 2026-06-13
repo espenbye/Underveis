@@ -18,18 +18,27 @@ final class VehiclesModel {
     private(set) var enabledModes: Set<VehicleMode> = [.bus]
     private(set) var status: ConnectionStatus = .idle
 
+    /// Transit stops in the visible area (only populated when zoomed in — see `stopsMaxSpan`).
+    private(set) var stops: [Stop] = []
+    private(set) var showStops = true
+
     let lineColors: LineColorStore
 
     /// Latest reported truth, eased toward by the interpolation ticker.
     private var targets: [String: Vehicle] = [:]
 
     private let client: EnturVehiclesClient
+    private let journeyPlanner: JourneyPlannerClient
     private var currentBox: BoundingBox?
     private var viewportTask: Task<Void, Never>?
     private var consumeTask: Task<Void, Never>?
     private var statusTask: Task<Void, Never>?
     private var evictionTask: Task<Void, Never>?
     private var interpolationTask: Task<Void, Never>?
+    private var stopsTask: Task<Void, Never>?
+
+    /// Hide stops when zoomed out wider than this (degrees latitude) — they'd be too dense to read.
+    private static let stopsMaxSpan = 0.06
 
     // Easing tuned for ~30 fps: a fraction of the remaining distance closed each frame, settling in
     // roughly half a second while staying smooth.
@@ -38,9 +47,14 @@ final class VehiclesModel {
     private static let bearingLerp = 0.22
     private static let positionEpsilon = 1e-6  // ~0.1 m in latitude degrees → snap when this close
 
-    init(lineColors: LineColorStore, client: EnturVehiclesClient = EnturVehiclesClient()) {
+    init(
+        lineColors: LineColorStore,
+        client: EnturVehiclesClient = EnturVehiclesClient(),
+        journeyPlanner: JourneyPlannerClient = JourneyPlannerClient()
+    ) {
         self.lineColors = lineColors
         self.client = client
+        self.journeyPlanner = journeyPlanner
     }
 
     /// Vehicles to draw: those whose mode is currently enabled.
@@ -89,11 +103,13 @@ final class VehiclesModel {
         statusTask?.cancel()
         evictionTask?.cancel()
         interpolationTask?.cancel()
+        stopsTask?.cancel()
         viewportTask = nil
         consumeTask = nil
         statusTask = nil
         evictionTask = nil
         interpolationTask = nil
+        stopsTask = nil
         Task { await client.stop() }
     }
 
@@ -116,6 +132,32 @@ final class VehiclesModel {
         pruneOutside(box)
         await client.setViewport(box, mode: subscriptionMode)
         merge(await client.snapshot(box: box, mode: subscriptionMode))
+        refreshStops(for: box)
+    }
+
+    // MARK: - Stops
+
+    func setShowStops(_ enabled: Bool) {
+        showStops = enabled
+        if let box = currentBox {
+            refreshStops(for: box)
+        }
+    }
+
+    /// Fetches stops for the box, but only when stops are enabled and we're zoomed in enough to keep
+    /// them legible; otherwise clears them.
+    private func refreshStops(for box: BoundingBox) {
+        stopsTask?.cancel()
+        guard showStops, box.latitudeSpan <= Self.stopsMaxSpan else {
+            if !stops.isEmpty { stops = [] }
+            return
+        }
+        stopsTask = Task { @MainActor [weak self] in
+            guard let self else { return }
+            let fetched = await journeyPlanner.stopPlaces(in: box)
+            guard !Task.isCancelled else { return }
+            stops = fetched
+        }
     }
 
     // MARK: - Mode filter

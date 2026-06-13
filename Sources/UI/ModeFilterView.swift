@@ -13,12 +13,24 @@ struct ModeFilterView: View {
                 }
             }
         }
+        Section("Kart") {
+            Toggle(isOn: stopsBinding) {
+                Label("Holdeplasser", systemImage: "signpost.right.fill")
+            }
+        }
     }
 
     private func binding(for mode: VehicleMode) -> Binding<Bool> {
         Binding(
             get: { model.enabledModes.contains(mode) },
             set: { model.setMode(mode, enabled: $0) }
+        )
+    }
+
+    private var stopsBinding: Binding<Bool> {
+        Binding(
+            get: { model.showStops },
+            set: { model.setShowStops($0) }
         )
     }
 }

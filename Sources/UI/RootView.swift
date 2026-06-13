@@ -38,10 +38,21 @@ struct RootView: View {
                 .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar { toolbarContent }
-            .inspector(isPresented: inspectorPresented) {
-                inspectorContent
-                    .inspectorColumnWidth(min: 280, ideal: 320, max: 420)
-            }
+            #if os(macOS)
+                .inspector(isPresented: inspectorPresented) {
+                    inspectorContent
+                        .inspectorColumnWidth(min: 280, ideal: 320, max: 420)
+                }
+            #else
+                // On iPhone, show the detail as a bottom card that leaves the map visible and
+                // interactive (so you can still see/pan the followed vehicle) instead of a full sheet.
+                .sheet(isPresented: inspectorPresented) {
+                    inspectorContent
+                        .presentationDetents([.height(260), .large])
+                        .presentationBackgroundInteraction(.enabled(upThrough: .height(260)))
+                        .presentationDragIndicator(.visible)
+                }
+            #endif
         }
         .task {
             location.requestAndStart()
