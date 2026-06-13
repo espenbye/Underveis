@@ -8,18 +8,24 @@ struct RootView: View {
 
     @State private var location = LocationProvider()
     @State private var departures = DeparturesModel()
-    @State private var cameraPosition: MapCameraPosition = .region(.bussradarDefault)
+    @State private var cameraPosition: MapCameraPosition = .region(.underveisDefault)
     @State private var currentCamera: MapCamera?
     @State private var selectedVehicleID: String?
     @State private var selectedStopID: String?
     @State private var isFollowing = false
     @State private var showFilters = false
     @State private var hasCentered = false
+    @AppStorage("mapStyle") private var mapStyleRaw = MapStyleOption.standard.rawValue
+
+    private var mapStyle: MapStyleOption {
+        MapStyleOption(rawValue: mapStyleRaw) ?? .standard
+    }
 
     var body: some View {
         NavigationStack {
             BusMapView(
                 model: model,
+                mapStyle: mapStyle,
                 cameraPosition: $cameraPosition,
                 selectedVehicleID: $selectedVehicleID,
                 selectedStopID: $selectedStopID,
@@ -36,7 +42,7 @@ struct RootView: View {
                     .padding(.top, 12)
             }
             .ignoresSafeArea(.container, edges: .bottom)
-            .navigationTitle("Bussradar")
+            .navigationTitle("Underveis")
             #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -60,7 +66,7 @@ struct RootView: View {
         .task {
             location.requestAndStart()
             model.start()
-            model.updateViewport(.bussradarDefault)
+            model.updateViewport(.underveisDefault)
         }
         .onChange(of: location.fixCount) {
             guard !hasCentered, let coordinate = location.coordinate else { return }
@@ -164,6 +170,19 @@ struct RootView: View {
             .disabled(selectedVehicleID == nil)
         }
         ToolbarItem(placement: .primaryAction) {
+            Menu {
+                Picker("Karttype", selection: $mapStyleRaw) {
+                    ForEach(MapStyleOption.allCases) { option in
+                        Label(option.title, systemImage: option.symbolName)
+                            .tag(option.rawValue)
+                    }
+                }
+                .pickerStyle(.inline)
+            } label: {
+                Label("Karttype", systemImage: "map")
+            }
+        }
+        ToolbarItem(placement: .primaryAction) {
             Button {
                 recenter()
             } label: {
@@ -215,7 +234,7 @@ struct RootView: View {
             withAnimation { cameraPosition = .region(MKCoordinateRegion(center: coordinate, span: .city)) }
         } else {
             location.requestAndStart()
-            withAnimation { cameraPosition = .userLocation(fallback: .region(.bussradarDefault)) }
+            withAnimation { cameraPosition = .userLocation(fallback: .region(.underveisDefault)) }
         }
     }
 
@@ -309,7 +328,7 @@ private struct StatusPill: View {
 
 extension MKCoordinateRegion {
     /// Central Oslo — the launch view before a location fix arrives.
-    static var bussradarDefault: MKCoordinateRegion {
+    static var underveisDefault: MKCoordinateRegion {
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 59.9113, longitude: 10.7510),
             span: MKCoordinateSpan(latitudeDelta: 0.12, longitudeDelta: 0.12)

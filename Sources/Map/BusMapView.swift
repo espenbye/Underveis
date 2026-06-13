@@ -1,11 +1,48 @@
 import MapKit
 import SwiftUI
 
+/// The available base-map renderings the user can switch between, persisted as a raw `String`.
+enum MapStyleOption: String, CaseIterable, Identifiable {
+    case standard
+    case hybrid
+    case satellite
+
+    var id: String { rawValue }
+
+    /// User-facing Norwegian label.
+    var title: String {
+        switch self {
+        case .standard: "Kart"
+        case .hybrid: "Hybrid"
+        case .satellite: "Satellitt"
+        }
+    }
+
+    /// SF Symbol shown next to the option in the menu.
+    var symbolName: String {
+        switch self {
+        case .standard: "map"
+        case .hybrid: "map.fill"
+        case .satellite: "globe.europe.africa.fill"
+        }
+    }
+
+    /// The MapKit style to apply to the map.
+    var mapStyle: MapStyle {
+        switch self {
+        case .standard: .standard
+        case .hybrid: .hybrid
+        case .satellite: .imagery
+        }
+    }
+}
+
 /// The map surface: one annotation per visible vehicle, with the camera bound to the parent so the
 /// recenter / follow controls can drive it. Camera changes feed the viewport back to the model,
 /// which re-scopes the Entur subscription.
 struct BusMapView: View {
     let model: VehiclesModel
+    let mapStyle: MapStyleOption
     @Binding var cameraPosition: MapCameraPosition
     @Binding var selectedVehicleID: String?
     @Binding var selectedStopID: String?
@@ -40,6 +77,7 @@ struct BusMapView: View {
 
                 UserAnnotation()
             }
+            .mapStyle(mapStyle.mapStyle)
             .mapControls {
                 MapCompass()
                 MapScaleView()
