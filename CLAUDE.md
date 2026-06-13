@@ -4,6 +4,11 @@ Universal SwiftUI + MapKit app (iPhone + Mac) showing Norwegian transit vehicles
 streamed from Entur's open real-time vehicles API. Swift 6 strict concurrency, MapKit, SwiftData,
 project generated with xcodegen. Min targets: iOS 26 / macOS 26.
 
+## Git workflow
+
+**Work directly on `main`** — this is a solo project, so commit straight to `main`; don't create
+feature branches. Still use Conventional Commits, and only commit/push when asked.
+
 ## Build & run
 
 The system `xcode-select` points at CommandLineTools, which **cannot** build this app. The Makefile
