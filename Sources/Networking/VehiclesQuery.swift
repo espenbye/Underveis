@@ -16,6 +16,7 @@ enum VehiclesQuery {
           lastUpdatedEpochSecond
           expirationEpochSecond
           line { lineRef lineName publicCode }
+          serviceJourney { id }
           originName
           destinationName
           location { latitude longitude }
@@ -82,6 +83,7 @@ struct VehicleUpdateDTO: Decodable, Sendable {
     let lastUpdatedEpochSecond: Double?
     let expirationEpochSecond: Double?
     let line: LineDTO?
+    let serviceJourney: ServiceJourneyDTO?
     let originName: String?
     let destinationName: String?
     let location: LocationDTO?
@@ -90,6 +92,10 @@ struct VehicleUpdateDTO: Decodable, Sendable {
         let lineRef: String?
         let lineName: String?
         let publicCode: String?
+    }
+
+    struct ServiceJourneyDTO: Decodable, Sendable {
+        let id: String?
     }
 
     struct LocationDTO: Decodable, Sendable {
@@ -112,6 +118,7 @@ struct VehicleUpdateDTO: Decodable, Sendable {
             speed: speed,
             delay: delay,
             mode: mode.flatMap(VehicleMode.init(rawValue:)),
+            serviceJourneyId: serviceJourney?.id,
             lineRef: line?.lineRef,
             lineName: line?.lineName,
             publicCode: line?.publicCode,

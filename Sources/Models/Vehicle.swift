@@ -15,6 +15,9 @@ struct Vehicle: Identifiable, Sendable, Equatable {
     var speed: Double?
     var delay: Double?
     var mode: VehicleMode?
+    /// The scheduled trip this vehicle is running (e.g. `RUT:ServiceJourney:…`). Joins to a
+    /// Journey Planner `Departure.serviceJourneyId`, letting a departure row locate its live vehicle.
+    var serviceJourneyId: String?
     var lineRef: String?
     var lineName: String?
     var publicCode: String?

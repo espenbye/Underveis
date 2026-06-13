@@ -7,9 +7,11 @@ struct RootView: View {
     let model: VehiclesModel
 
     @State private var location = LocationProvider()
+    @State private var departures = DeparturesModel()
     @State private var cameraPosition: MapCameraPosition = .region(.bussradarDefault)
     @State private var currentCamera: MapCamera?
     @State private var selectedVehicleID: String?
+    @State private var selectedStopID: String?
     @State private var isFollowing = false
     @State private var showFilters = false
     @State private var hasCentered = false
@@ -20,6 +22,7 @@ struct RootView: View {
                 model: model,
                 cameraPosition: $cameraPosition,
                 selectedVehicleID: $selectedVehicleID,
+                selectedStopID: $selectedStopID,
                 currentCamera: $currentCamera,
                 isFollowing: $isFollowing
             )
@@ -63,6 +66,27 @@ struct RootView: View {
             guard !hasCentered, let coordinate = location.coordinate else { return }
             hasCentered = true
             withAnimation { cameraPosition = .region(MKCoordinateRegion(center: coordinate, span: .city)) }
+        }
+        // Selecting a stop starts its departures poll and is mutually exclusive with a selected
+        // vehicle (clearing the vehicle also drops follow mode). Deselecting stops the poll.
+        .onChange(of: selectedStopID) { _, newID in
+            guard let id = newID else {
+                departures.deselect()
+                return
+            }
+            guard let stop = model.stops.first(where: { $0.id == id }) else {
+                selectedStopID = nil  // stop scrolled out of the set before we could resolve it
+                return
+            }
+            departures.select(stop: stop)
+            selectedVehicleID = nil
+            isFollowing = false
+            center(on: stop)
+        }
+        // The reverse direction: picking a vehicle clears any selected stop (whose .onChange then
+        // tears down the poll).
+        .onChange(of: selectedVehicleID) { _, newID in
+            if newID != nil { selectedStopID = nil }
         }
         // Follow mode: recenter on the tracked vehicle whenever its position changes. `followKey` is
         // nil when not following, so this no-ops then. On the transition into following (old key was
@@ -152,21 +176,28 @@ struct RootView: View {
     private var inspectorContent: some View {
         if let id = selectedVehicleID, let vehicle = model.vehicles[id] {
             VehicleDetailView(vehicle: vehicle, colors: model.lineColors.colors(for: vehicle))
+        } else if selectedStopID != nil {
+            StopDetailView(
+                model: departures,
+                liveServiceJourneyIDs: model.liveServiceJourneyIDs,
+                onSelectDeparture: selectDeparture
+            )
         } else {
             ContentUnavailableView(
-                "Ingen avgang valgt",
+                "Ingenting valgt",
                 systemImage: "bus.fill",
-                description: Text("Trykk på et kjøretøy på kartet for detaljer.")
+                description: Text("Trykk på et kjøretøy eller en holdeplass på kartet for detaljer.")
             )
         }
     }
 
     private var inspectorPresented: Binding<Bool> {
         Binding(
-            get: { selectedVehicleID != nil },
+            get: { selectedVehicleID != nil || selectedStopID != nil },
             set: {
                 if !$0 {
                     selectedVehicleID = nil
+                    selectedStopID = nil
                     isFollowing = false
                 }
             }
@@ -186,6 +217,33 @@ struct RootView: View {
             location.requestAndStart()
             withAnimation { cameraPosition = .userLocation(fallback: .region(.bussradarDefault)) }
         }
+    }
+
+    /// Locates the live vehicle running a tapped departure's trip and selects + follows it. The
+    /// vehicle-selection `.onChange` clears the stop, so the panel switches to the vehicle detail.
+    /// No-ops when the trip has no vehicle currently on the map (`onSelectDeparture` is only wired to
+    /// rows already marked live, so this guard is belt-and-braces).
+    private func selectDeparture(_ departure: Departure) {
+        guard let vehicle = model.visibleVehicles.first(where: {
+            $0.serviceJourneyId == departure.serviceJourneyId
+        }) else { return }
+        selectedVehicleID = vehicle.id
+        isFollowing = true
+    }
+
+    private func center(on stop: Stop) {
+        guard let currentCamera else {
+            withAnimation { cameraPosition = .region(MKCoordinateRegion(center: stop.coordinate, span: .city)) }
+            return
+        }
+
+        let camera = MapCamera(
+            centerCoordinate: stop.coordinate,
+            distance: currentCamera.distance,
+            heading: currentCamera.heading,
+            pitch: currentCamera.pitch
+        )
+        withAnimation(.easeInOut(duration: 0.35)) { cameraPosition = .camera(camera) }
     }
 }
 

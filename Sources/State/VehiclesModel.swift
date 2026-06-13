@@ -22,6 +22,11 @@ final class VehiclesModel {
     private(set) var stops: [Stop] = []
     private(set) var showStops = true
 
+    /// Service-journey ids of vehicles currently drawn on the map (mode-filtered). The stop
+    /// departures view reads this to mark which rows have a live, tappable vehicle. Reassigned only
+    /// when membership changes, so it never churns on the per-frame interpolation path.
+    private(set) var liveServiceJourneyIDs: Set<String> = []
+
     let lineColors: LineColorStore
 
     /// Latest reported truth, eased toward by the interpolation ticker.
@@ -171,6 +176,7 @@ final class VehiclesModel {
         let allowed = enabledModes
         targets = targets.filter { allowed.contains($0.value.mode ?? .bus) }
         vehicles = vehicles.filter { targets[$0.key] != nil }
+        refreshLiveServiceJourneys()
 
         guard let box = currentBox else { return }
         Task { @MainActor [weak self] in
@@ -191,6 +197,17 @@ final class VehiclesModel {
             }
         }
         lineColors.enrich(lineRefs: batch.compactMap(\.lineRef))
+        refreshLiveServiceJourneys()
+    }
+
+    /// Recomputes `liveServiceJourneyIDs` from the mode-filtered target set, assigning only when the
+    /// membership actually changes. Called from the membership-mutating paths (merge / prune / evict /
+    /// mode change) — never from `stepInterpolation`, which only eases positions.
+    private func refreshLiveServiceJourneys() {
+        // Derive from `visibleVehicles` (the mode-filtered, on-screen set) so a row is only marked
+        // live when its vehicle is actually tappable on the map.
+        let ids = Set(visibleVehicles.lazy.compactMap(\.serviceJourneyId))
+        if ids != liveServiceJourneyIDs { liveServiceJourneyIDs = ids }
     }
 
     /// One animation frame: ease each displayed vehicle toward its target position and bearing, and
@@ -238,12 +255,14 @@ final class VehiclesModel {
     private func pruneOutside(_ box: BoundingBox) {
         targets = targets.filter { box.contains(latitude: $0.value.latitude, longitude: $0.value.longitude) }
         vehicles = vehicles.filter { targets[$0.key] != nil }
+        refreshLiveServiceJourneys()
     }
 
     private func evictStale() {
         let now = Date()
         targets = targets.filter { !$0.value.isExpired(asOf: now) }
         vehicles = vehicles.filter { targets[$0.key] != nil }
+        refreshLiveServiceJourneys()
     }
 
     private var subscriptionMode: VehicleMode? {

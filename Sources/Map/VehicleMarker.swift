@@ -7,7 +7,7 @@ struct VehicleMarker: View {
     let colors: LineColorStore.ResolvedColors
     var isSelected: Bool = false
 
-    private var size: CGFloat { isSelected ? 40 : 32 }
+    private var size: CGFloat { isSelected ? 42 : 34 }
 
     var body: some View {
         ZStack {
