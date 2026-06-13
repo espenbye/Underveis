@@ -1,4 +1,4 @@
-name: Bussradar
+name: Underveis
 
 options:
   bundleIdPrefix: no.espenbye
@@ -18,12 +18,12 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     GENERATE_INFOPLIST_FILE: YES
     INFOPLIST_KEY_UILaunchScreen_Generation: YES
-    INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Bussradar viser kollektivtrafikk i nærheten av deg på kartet."
+    INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Underveis viser kollektivtrafikk i nærheten av deg på kartet."
     # Entitlements only apply when building for macOS (App Sandbox + outbound network + location).
-    "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Bussradar.entitlements
+    "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Underveis.entitlements
 
 targets:
-  Bussradar:
+  Underveis:
     type: application
     supportedDestinations: [iOS, macOS]
     deploymentTarget:
@@ -34,18 +34,18 @@ targets:
       - path: Resources
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: no.espenbye.bussradar
-        PRODUCT_NAME: Bussradar
+        PRODUCT_BUNDLE_IDENTIFIER: no.espenbye.underveis
+        PRODUCT_NAME: Underveis
         TARGETED_DEVICE_FAMILY: "1,2" # iPhone + iPad
         INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.navigation"
-        INFOPLIST_KEY_CFBundleDisplayName: Bussradar
+        INFOPLIST_KEY_CFBundleDisplayName: Underveis
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
 
 schemes:
-  Bussradar:
+  Underveis:
     build:
       targets:
-        Bussradar: all
+        Underveis: all
     run:
       config: Debug
     profile:

@@ -2,7 +2,7 @@ import SwiftData
 import SwiftUI
 
 @main
-struct BussradarApp: App {
+struct UnderveisApp: App {
     private let container: ModelContainer
     @State private var model: VehiclesModel
 

@@ -1,11 +1,11 @@
-# Bussradar — developer workflow
+# Underveis — developer workflow
 # Uses the Xcode 27 beta toolchain without changing the system-wide xcode-select.
 
 DEVELOPER_DIR ?= /Applications/Xcode-27.0.0-beta.app/Contents/Developer
 export DEVELOPER_DIR
 
-PROJECT  := Bussradar.xcodeproj
-SCHEME   := Bussradar
+PROJECT  := Underveis.xcodeproj
+SCHEME   := Underveis
 SIM_OS   := 26.0
 SIM_NAME := iPhone 17 Pro
 
