@@ -1,20 +1,18 @@
 import SwiftUI
 
-/// The "Lagret" sheet: the user's favourite stops, recents (recent stops + recent lines), and watched
+/// The "Lagret" tab: the user's favourite stops, recents (recent stops + recent lines), and watched
 /// lines, behind a segmented control. Reads its lists live from `model.personalization`; mutations
 /// (favourite/watch) go straight to the store / model so the lists update in place. Navigation that
-/// changes the map selection is deferred to the host via `onSelectStop` / `onSelectLine` — the view
-/// dismisses itself first, so the host applies the selection after this sheet is gone (avoiding a
-/// present-while-dismissing race on iOS).
+/// changes the map selection is handed to the host via `onSelectStop` / `onSelectLine`, which switches
+/// to the Kart tab to show it.
 struct SavedView: View {
     let model: VehiclesModel
-    /// Open a saved stop's departures board.
+    /// Open a saved stop's departures board (host switches to the Kart tab).
     let onSelectStop: (Stop) -> Void
-    /// Watch + reveal a line on the map.
+    /// Watch + reveal a line on the map (host switches to the Kart tab).
     let onSelectLine: (SavedLine) -> Void
 
     @State private var tab: Tab = .favorites
-    @Environment(\.dismiss) private var dismiss
 
     private enum Tab: Hashable { case favorites, recent, lines }
 
@@ -44,11 +42,6 @@ struct SavedView: View {
             #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Ferdig") { dismiss() }
-                }
-            }
         }
     }
 
@@ -125,7 +118,7 @@ struct SavedView: View {
         SavedStopRow(
             stop: stop,
             isFavorite: personalization.isFavorite(stopID: stop.id),
-            onTap: { onSelectStop(stop.stop); dismiss() },
+            onTap: { onSelectStop(stop.stop) },
             onToggleFavorite: { personalization.toggleFavorite(stop.stop) }
         )
     }
@@ -134,7 +127,7 @@ struct SavedView: View {
         SavedLineRow(
             line: line,
             isWatched: personalization.isWatched(lineRef: line.lineRef),
-            onTap: { onSelectLine(line); dismiss() },
+            onTap: { onSelectLine(line) },
             onToggleWatch: { model.toggleWatched(line) }
         )
     }

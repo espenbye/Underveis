@@ -1,14 +1,20 @@
 import MapKit
 import SwiftUI
 
-/// Map-first root. The map fills the window on every platform; filters live in a toolbar
-/// popover/sheet, the selected vehicle in an inspector, and connection status in a floating pill.
+/// App root: a `TabView` (sidebar on Mac/iPad, floating tab bar on iPhone) over three destinations —
+/// the live map ("Kart"), nearby stops ("Nær meg"), and the user's saved stops/lines ("Lagret").
+/// The map tab owns the camera, selection, and detail inspector/sheet; the browse tabs hand a chosen
+/// stop/line back here, which opens it and switches to the Kart tab.
 struct RootView: View {
     let model: VehiclesModel
+
+    /// Top-level tabs.
+    private enum AppTab: Hashable { case map, nearby, saved }
 
     @State private var location = LocationProvider()
     @State private var departures = DeparturesModel()
     @State private var journey = JourneyModel()
+    @State private var nearby = NearbyModel()
     @State private var cameraPosition: MapCameraPosition = .region(.underveisDefault)
     @State private var currentCamera: MapCamera?
     @State private var selectedVehicleID: String?
@@ -16,13 +22,13 @@ struct RootView: View {
     /// The resolved stop behind `selectedStopID` (from the map or a saved/recent snapshot). Held so
     /// the favourite toggle has the full stop (`DeparturesModel` only carries its name/symbol).
     @State private var selectedStop: Stop?
+    /// Full stop the host is about to open (set by `openStop`), used to resolve `selectedStopID` for a
+    /// fresh stop — e.g. a nearby result — that isn't on the map or in favourites/recents yet.
+    @State private var primedStop: Stop?
     @State private var isFollowing = false
     @State private var showFilters = false
-    @State private var showSaved = false
-    /// Selection chosen in the "Lagret" sheet, applied in its `onDismiss` so we never present the
-    /// detail while the saved sheet is still dismissing (an iOS present-while-dismissing race).
-    @State private var pendingSavedStop: Stop?
-    @State private var pendingSavedLine: SavedLine?
+    /// Which top-level tab is showing. Browse tabs switch this back to `.map` after a selection.
+    @State private var selectedTab: AppTab = .map
     @State private var hasCentered = false
     @AppStorage("mapStyle") private var mapStyleRaw = MapStyleOption.standard.rawValue
 
@@ -31,70 +37,47 @@ struct RootView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            BusMapView(
-                model: model,
-                mapStyle: mapStyle,
-                cameraPosition: $cameraPosition,
-                selectedVehicleID: $selectedVehicleID,
-                selectedStopID: $selectedStopID,
-                currentCamera: $currentCamera,
-                isFollowing: $isFollowing,
-                routeCoordinates: journey.routeCoordinates,
-                routeColor: routeColor,
-                journeyStops: journey.calls,
-                nextStopID: journey.nextStopID(for: followedVehicle)
-            )
-            .overlay(alignment: .topLeading) {
-                StatusPill(status: model.status, count: model.visibleVehicles.count)
-                    .padding(12)
+        TabView(selection: $selectedTab) {
+            Tab("Kart", systemImage: "map", value: AppTab.map) {
+                mapTab
             }
-            .overlay(alignment: .top) {
-                followChip
-                    .animation(.snappy, value: isFollowing)
-                    .padding(.top, 12)
+            Tab("Nær meg", systemImage: "location.magnifyingglass", value: AppTab.nearby) {
+                NearbyView(
+                    model: nearby,
+                    location: location,
+                    liveServiceJourneyIDs: model.liveServiceJourneyIDs,
+                    isFavorite: { model.personalization.isFavorite(stopID: $0) },
+                    onToggleFavorite: { model.personalization.toggleFavorite($0) },
+                    onSelectStop: { openStop($0); selectedTab = .map }
+                )
             }
-            .ignoresSafeArea(.container, edges: .bottom)
-            .navigationTitle("Underveis")
-            #if os(iOS)
-                .navigationBarTitleDisplayMode(.inline)
-            #endif
-            .toolbar { toolbarContent }
-            #if os(macOS)
-                .inspector(isPresented: inspectorPresented) {
-                    inspectorContent
-                        .inspectorColumnWidth(min: 280, ideal: 320, max: 420)
-                }
-            #else
-                // On iPhone, show the detail as a bottom card that leaves the map visible and
-                // interactive (so you can still see/pan the followed vehicle) instead of a full sheet.
-                .sheet(isPresented: inspectorPresented) {
-                    inspectorContent
-                        .presentationDetents([.height(260), .large])
-                        .presentationBackgroundInteraction(.enabled(upThrough: .height(260)))
-                        .presentationDragIndicator(.visible)
-                }
-            #endif
+            Tab("Lagret", systemImage: "star", value: AppTab.saved) {
+                SavedView(
+                    model: model,
+                    onSelectStop: { openStop($0); selectedTab = .map },
+                    onSelectLine: { openLine($0); selectedTab = .map }
+                )
+            }
         }
-        .sheet(isPresented: $showSaved, onDismiss: applySavedSelection) {
-            SavedView(
-                model: model,
-                onSelectStop: { pendingSavedStop = $0 },
-                onSelectLine: { pendingSavedLine = $0 }
-            )
-            #if os(iOS)
-                .presentationDetents([.medium, .large])
-            #endif
-        }
+        .tabViewStyle(.sidebarAdaptable)
         .task {
             location.requestAndStart()
             model.start()
             model.updateViewport(.underveisDefault)
         }
         .onChange(of: location.fixCount) {
+            if selectedTab == .nearby, let coordinate = location.coordinate { nearby.update(coordinate: coordinate) }
             guard !hasCentered, let coordinate = location.coordinate else { return }
             hasCentered = true
             withAnimation { cameraPosition = .region(MKCoordinateRegion(center: coordinate, span: .city)) }
+        }
+        // The "Nær meg" tab drives a location-scoped fetch while it's the active tab; stop otherwise.
+        .onChange(of: selectedTab) { _, tab in
+            if tab == .nearby {
+                nearby.start(near: location.coordinate)
+            } else {
+                nearby.stop()
+            }
         }
         // Selecting a stop starts its departures poll and is mutually exclusive with a selected
         // vehicle (clearing the vehicle also drops follow mode). Deselecting stops the poll.
@@ -104,9 +87,12 @@ struct RootView: View {
                 departures.deselect()
                 return
             }
-            // Resolve from the on-map stops first, then fall back to a saved/recent snapshot so a
-            // favourite or recent stop opens even when it's off-screen or the map is zoomed out.
-            guard let stop = model.stops.first(where: { $0.id == id }) ?? model.personalization.knownStop(id: id) else {
+            // Resolve a primed stop (one the host just chose, e.g. a nearby result) first, then the
+            // on-map stops, then a saved/recent snapshot — so a stop opens even when it's off-screen,
+            // zoomed out, or not yet a favourite/recent.
+            let primed = primedStop.flatMap { $0.id == id ? $0 : nil }
+            primedStop = nil
+            guard let stop = primed ?? model.stops.first(where: { $0.id == id }) ?? model.personalization.knownStop(id: id) else {
                 selectedStopID = nil  // unknown id (scrolled out before we could resolve it)
                 return
             }
@@ -170,6 +156,57 @@ struct RootView: View {
         }
     }
 
+    /// The "Kart" tab: the live map with its overlays, map-control toolbar, and the selected
+    /// vehicle/stop detail (inspector on macOS, bottom sheet on iPhone).
+    @ViewBuilder
+    private var mapTab: some View {
+        NavigationStack {
+            BusMapView(
+                model: model,
+                mapStyle: mapStyle,
+                cameraPosition: $cameraPosition,
+                selectedVehicleID: $selectedVehicleID,
+                selectedStopID: $selectedStopID,
+                currentCamera: $currentCamera,
+                isFollowing: $isFollowing,
+                routeCoordinates: journey.routeCoordinates,
+                routeColor: routeColor,
+                journeyStops: journey.calls,
+                nextStopID: journey.nextStopID(for: followedVehicle)
+            )
+            .overlay(alignment: .topLeading) {
+                StatusPill(status: model.status, count: model.visibleVehicles.count)
+                    .padding(12)
+            }
+            .overlay(alignment: .top) {
+                followChip
+                    .animation(.snappy, value: isFollowing)
+                    .padding(.top, 12)
+            }
+            .ignoresSafeArea(.container, edges: .bottom)
+            .navigationTitle("Underveis")
+            #if os(iOS)
+                .navigationBarTitleDisplayMode(.inline)
+            #endif
+            .toolbar { toolbarContent }
+            #if os(macOS)
+                .inspector(isPresented: inspectorPresented) {
+                    inspectorContent
+                        .inspectorColumnWidth(min: 280, ideal: 320, max: 420)
+                }
+            #else
+                // On iPhone, show the detail as a bottom card that leaves the map visible and
+                // interactive (so you can still see/pan the followed vehicle) instead of a full sheet.
+                .sheet(isPresented: inspectorPresented) {
+                    inspectorContent
+                        .presentationDetents([.height(260), .large])
+                        .presentationBackgroundInteraction(.enabled(upThrough: .height(260)))
+                        .presentationDragIndicator(.visible)
+                }
+            #endif
+        }
+    }
+
     /// Camera distance (≈ metres) to zoom to when follow first engages — a close neighbourhood view.
     private static let followZoomDistance: CLLocationDistance = 1400
 
@@ -214,13 +251,6 @@ struct RootView: View {
                     #if os(iOS)
                         .presentationDetents([.medium, .large])
                     #endif
-            }
-        }
-        ToolbarItem(placement: .primaryAction) {
-            Button {
-                openSaved()
-            } label: {
-                Label("Lagret", systemImage: "star")
             }
         }
         ToolbarItem(placement: .primaryAction) {
@@ -298,33 +328,16 @@ struct RootView: View {
         withAnimation(.snappy) { isFollowing.toggle() }
     }
 
-    /// Opens the "Lagret" sheet. Clears any current selection first so the detail (a sheet on iOS)
-    /// is gone before the saved sheet presents — two sheets can't share a presenter.
-    private func openSaved() {
-        selectedVehicleID = nil
-        selectedStopID = nil
-        isFollowing = false
-        showSaved = true
-    }
-
-    /// Applies the choice made in the "Lagret" sheet once it has finished dismissing.
-    private func applySavedSelection() {
-        if let stop = pendingSavedStop {
-            pendingSavedStop = nil
-            openStop(stop)
-        } else if let line = pendingSavedLine {
-            pendingSavedLine = nil
-            openLine(line)
-        }
-    }
-
-    /// Opens a saved stop's departures board. Setting the id drives the stop `.onChange`, which
-    /// resolves it (via `knownStop`), starts the poll, records the view, and centres the map.
+    /// Opens a stop's departures board. Priming `primedStop` lets the stop `.onChange` resolve a
+    /// fresh stop (e.g. a nearby result) that isn't on the map or saved yet; setting the id then
+    /// starts the poll, records the view, and centres the map. Callers on the browse tabs switch to
+    /// the Kart tab to reveal the board.
     private func openStop(_ stop: Stop) {
+        primedStop = stop
         selectedStopID = stop.id
     }
 
-    /// Watches a saved line (so it's shown + emphasized on the map) and reveals the map.
+    /// Watches a saved line (so it's shown + emphasized on the map). Callers switch to the Kart tab.
     private func openLine(_ line: SavedLine) {
         if !model.personalization.isWatched(lineRef: line.lineRef) {
             model.toggleWatched(line)

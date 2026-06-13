@@ -137,7 +137,7 @@ private struct DepartureRow: View {
             lineBadge
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(destination)
+                Text(departure.displayDestination)
                     .font(.callout.weight(.medium))
                     .strikethrough(departure.isCancelled)
                     .lineLimit(1)
@@ -182,10 +182,10 @@ private struct DepartureRow: View {
         // Reading Date() here (re-run whenever `tickID` changes) is what makes the countdown live.
         let now = Date()
         VStack(alignment: .trailing, spacing: 2) {
-            Text(headline(now: now))
+            Text(departure.countdownLabel(now: now))
                 .font(.callout.weight(.semibold))
                 .monospacedDigit()
-                .foregroundStyle(headlineColor)
+                .foregroundStyle(departure.countdownTint)
             if let caption = caption(now: now) {
                 Text(caption)
                     .font(.caption2)
@@ -194,37 +194,12 @@ private struct DepartureRow: View {
         }
     }
 
-    private var destination: String {
-        if !departure.destinationFrontText.isEmpty { return departure.destinationFrontText }
-        return departure.lineName ?? "Avgang"
-    }
-
-    /// Big right-hand line: "Avreist" / "Innstilt" / "Nå" / "N min" / clock time for distant calls.
-    private func headline(now: Date) -> String {
-        if departure.actualDeparture != nil { return "Avreist" }
-        if departure.isCancelled { return "Innstilt" }
-        let remaining = departure.expectedDeparture.timeIntervalSince(now)
-        if remaining < 60 { return "Nå" }
-        let minutes = Int(remaining / 60)
-        if minutes < 60 { return "\(minutes) min" }
-        return clock(departure.expectedDeparture)
-    }
-
     /// Secondary line: the clock time, with a "forsinket" note when running late.
     private func caption(now: Date) -> String? {
         if departure.isCancelled { return nil }
         let time = clock(departure.actualDeparture ?? departure.expectedDeparture)
         if case .delayed = departure.status { return "\(time) · forsinket" }
         return time
-    }
-
-    private var headlineColor: AnyShapeStyle {
-        if departure.actualDeparture != nil { return AnyShapeStyle(.secondary) }
-        switch departure.status {
-        case .cancelled: return AnyShapeStyle(Color.red)
-        case .delayed: return AnyShapeStyle(Color.orange)
-        case .onTime, .early: return AnyShapeStyle(Color.green)
-        }
     }
 
     private var captionColor: AnyShapeStyle {
