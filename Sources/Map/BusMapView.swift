@@ -95,7 +95,8 @@ struct BusMapView: View {
                         VehicleMarker(
                             vehicle: vehicle,
                             colors: model.lineColors.colors(for: vehicle),
-                            isSelected: selectedVehicleID == vehicle.id
+                            isSelected: selectedVehicleID == vehicle.id,
+                            isWatched: model.personalization.isWatched(lineRef: vehicle.lineRef ?? "")
                         )
                         .onTapGesture { select(vehicle) }
                     }

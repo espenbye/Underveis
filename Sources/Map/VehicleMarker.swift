@@ -6,6 +6,8 @@ struct VehicleMarker: View {
     let vehicle: Vehicle
     let colors: LineColorStore.ResolvedColors
     var isSelected: Bool = false
+    /// Whether this vehicle's line is watched — emphasized with a stronger ring and a star badge.
+    var isWatched: Bool = false
 
     private var size: CGFloat { isSelected ? 38 : 30 }
 
@@ -33,9 +35,30 @@ struct VehicleMarker: View {
             }
             .frame(width: size, height: size)
             .glassEffect(.regular.tint(colors.tint.opacity(isSelected ? 0.16 : 0.09)), in: Circle())
-            .overlay(Circle().strokeBorder(colors.tint.opacity(isSelected ? 0.48 : 0.28), lineWidth: isSelected ? 2 : 1.25))
+            .overlay(Circle().strokeBorder(colors.tint.opacity(ringOpacity), lineWidth: ringWidth))
             .shadow(color: .black.opacity(0.22), radius: isSelected ? 4 : 2, y: 1)
+            .overlay(alignment: .topTrailing) {
+                if isWatched {
+                    Image(systemName: "star.fill")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(.yellow)
+                        .padding(2)
+                        .background(.ultraThinMaterial, in: Circle())
+                        .overlay(Circle().strokeBorder(.white.opacity(0.5), lineWidth: 0.5))
+                        .offset(x: 3, y: -3)
+                }
+            }
         }
         .animation(.snappy, value: isSelected)
+    }
+
+    private var ringOpacity: Double {
+        if isSelected { return 0.48 }
+        return isWatched ? 0.5 : 0.28
+    }
+
+    private var ringWidth: CGFloat {
+        if isSelected { return 2 }
+        return isWatched ? 2 : 1.25
     }
 }

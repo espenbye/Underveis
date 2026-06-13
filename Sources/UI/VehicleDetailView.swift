@@ -7,6 +7,10 @@ struct VehicleDetailView: View {
     let colors: LineColorStore.ResolvedColors
     /// The vehicle's journey (route + stop calls), owned by `RootView` and shared with the map.
     let journey: JourneyModel
+    /// Whether this vehicle's line is watched, and a toggle for it (the star in the header). The
+    /// toggle is shown only when the vehicle has a line to watch.
+    let isWatched: Bool
+    let onToggleWatch: () -> Void
 
     /// Drives the Look Around "ride along" preview, refetching as the vehicle moves.
     @State private var rideAlong = RideAlongModel()
@@ -79,6 +83,18 @@ struct VehicleDetailView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+            }
+
+            if vehicle.lineRef != nil {
+                Spacer(minLength: 8)
+
+                Button(action: onToggleWatch) {
+                    Image(systemName: isWatched ? "star.fill" : "star")
+                        .font(.title3)
+                        .foregroundStyle(isWatched ? AnyShapeStyle(.yellow) : AnyShapeStyle(.secondary))
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(isWatched ? "Slutt å følge linjen" : "Følg linjen")
             }
         }
     }

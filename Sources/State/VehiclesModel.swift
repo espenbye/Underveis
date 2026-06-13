@@ -28,6 +28,9 @@ final class VehiclesModel {
     private(set) var liveServiceJourneyIDs: Set<String> = []
 
     let lineColors: LineColorStore
+    /// Watched lines + favourites/recents. Watched lines override the mode filter (always shown), so
+    /// this model reads `watchedLineRefs` / `watchedModes` from it on the visibility/subscription paths.
+    let personalization: PersonalizationStore
 
     /// Latest reported truth, eased toward by the interpolation ticker.
     private var targets: [String: Vehicle] = [:]
@@ -54,21 +57,28 @@ final class VehiclesModel {
 
     init(
         lineColors: LineColorStore,
+        personalization: PersonalizationStore,
         client: EnturVehiclesClient = EnturVehiclesClient(),
         journeyPlanner: JourneyPlannerClient = JourneyPlannerClient()
     ) {
         self.lineColors = lineColors
+        self.personalization = personalization
         self.client = client
         self.journeyPlanner = journeyPlanner
     }
 
-    /// Vehicles to draw: those whose mode is currently enabled.
+    /// Vehicles to draw — see `isVisible(_:)`.
     var visibleVehicles: [Vehicle] {
-        let modes = enabledModes
-        return vehicles.values.filter { vehicle in
-            guard let mode = vehicle.mode else { return false }
-            return modes.contains(mode)
-        }
+        vehicles.values.filter(isVisible)
+    }
+
+    /// Whether a vehicle is currently shown: its mode is enabled, or its line is watched (a watched
+    /// line overrides the mode filter — "always shown"). This is the single source of truth for both
+    /// on-screen visibility and which targets are worth retaining.
+    private func isVisible(_ vehicle: Vehicle) -> Bool {
+        if let ref = vehicle.lineRef, personalization.watchedLineRefs.contains(ref) { return true }
+        guard let mode = vehicle.mode else { return false }
+        return enabledModes.contains(mode)
     }
 
     // MARK: - Lifecycle
@@ -173,8 +183,44 @@ final class VehiclesModel {
         } else {
             enabledModes.remove(mode)
         }
-        let allowed = enabledModes
-        targets = targets.filter { allowed.contains($0.value.mode ?? .bus) }
+        rescope()
+    }
+
+    // MARK: - Watched lines
+
+    /// Watches/unwatches the given vehicle's line, then re-scopes the live feed. Watch toggles are
+    /// routed through the model — rather than straight to `PersonalizationStore` — because watched
+    /// lines are the one personalization that changes the live subscription (favourites/recents don't).
+    func toggleWatched(for vehicle: Vehicle) {
+        guard let ref = vehicle.lineRef, !ref.isEmpty else { return }
+        let shouldWatch = !personalization.isWatched(lineRef: ref)
+        personalization.setWatched(
+            shouldWatch,
+            lineRef: ref,
+            publicCode: vehicle.publicCode,
+            name: vehicle.lineName,
+            mode: vehicle.mode
+        )
+        rescope()
+    }
+
+    /// Watches/unwatches a saved line (e.g. tapped in the "Lagret" sheet), then re-scopes the feed.
+    func toggleWatched(_ line: SavedLine) {
+        let shouldWatch = !personalization.isWatched(lineRef: line.lineRef)
+        personalization.setWatched(
+            shouldWatch,
+            lineRef: line.lineRef,
+            publicCode: line.publicCode,
+            name: line.name,
+            mode: line.mode
+        )
+        rescope()
+    }
+
+    /// Drops now-hidden vehicles and re-subscribes for the current modes ∪ watched modes. Shared by
+    /// the mode-filter and watched-line paths since both change which vehicles should be on screen.
+    private func rescope() {
+        targets = targets.filter { isVisible($0.value) }
         vehicles = vehicles.filter { targets[$0.key] != nil }
         refreshLiveServiceJourneys()
 
@@ -265,8 +311,13 @@ final class VehiclesModel {
         refreshLiveServiceJourneys()
     }
 
+    /// The single mode to request server-side, or `nil` to fetch all modes and filter client-side.
+    /// Must cover both the enabled modes and the modes of any watched lines, so a watched line is
+    /// fetched even when its own mode is filtered out. Narrows to one mode only when everything we
+    /// need is that single mode; otherwise fetches all (and `isVisible` filters down).
     private var subscriptionMode: VehicleMode? {
-        enabledModes.count == 1 ? enabledModes.first : nil
+        let required = enabledModes.union(personalization.watchedModes)
+        return required.count == 1 ? required.first : nil
     }
 
     // MARK: - Angle helpers

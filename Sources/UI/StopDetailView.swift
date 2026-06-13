@@ -7,6 +7,9 @@ struct StopDetailView: View {
     let model: DeparturesModel
     /// Service-journey ids with a live vehicle on the map; those rows become tappable.
     let liveServiceJourneyIDs: Set<String>
+    /// Whether this stop is a favourite, and a toggle for it (the star in the header).
+    let isFavorite: Bool
+    let onToggleFavorite: () -> Void
     /// Invoked when a live row is tapped — locates and highlights its vehicle.
     let onSelectDeparture: (Departure) -> Void
 
@@ -41,6 +44,16 @@ struct StopDetailView: View {
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
+
+            Spacer(minLength: 8)
+
+            Button(action: onToggleFavorite) {
+                Image(systemName: isFavorite ? "star.fill" : "star")
+                    .font(.title3)
+                    .foregroundStyle(isFavorite ? AnyShapeStyle(.yellow) : AnyShapeStyle(.secondary))
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isFavorite ? "Fjern fra favoritter" : "Legg til i favoritter")
         }
     }
 

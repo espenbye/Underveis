@@ -13,8 +13,16 @@ struct RootView: View {
     @State private var currentCamera: MapCamera?
     @State private var selectedVehicleID: String?
     @State private var selectedStopID: String?
+    /// The resolved stop behind `selectedStopID` (from the map or a saved/recent snapshot). Held so
+    /// the favourite toggle has the full stop (`DeparturesModel` only carries its name/symbol).
+    @State private var selectedStop: Stop?
     @State private var isFollowing = false
     @State private var showFilters = false
+    @State private var showSaved = false
+    /// Selection chosen in the "Lagret" sheet, applied in its `onDismiss` so we never present the
+    /// detail while the saved sheet is still dismissing (an iOS present-while-dismissing race).
+    @State private var pendingSavedStop: Stop?
+    @State private var pendingSavedLine: SavedLine?
     @State private var hasCentered = false
     @AppStorage("mapStyle") private var mapStyleRaw = MapStyleOption.standard.rawValue
 
@@ -68,6 +76,16 @@ struct RootView: View {
                 }
             #endif
         }
+        .sheet(isPresented: $showSaved, onDismiss: applySavedSelection) {
+            SavedView(
+                model: model,
+                onSelectStop: { pendingSavedStop = $0 },
+                onSelectLine: { pendingSavedLine = $0 }
+            )
+            #if os(iOS)
+                .presentationDetents([.medium, .large])
+            #endif
+        }
         .task {
             location.requestAndStart()
             model.start()
@@ -82,14 +100,19 @@ struct RootView: View {
         // vehicle (clearing the vehicle also drops follow mode). Deselecting stops the poll.
         .onChange(of: selectedStopID) { _, newID in
             guard let id = newID else {
+                selectedStop = nil
                 departures.deselect()
                 return
             }
-            guard let stop = model.stops.first(where: { $0.id == id }) else {
-                selectedStopID = nil  // stop scrolled out of the set before we could resolve it
+            // Resolve from the on-map stops first, then fall back to a saved/recent snapshot so a
+            // favourite or recent stop opens even when it's off-screen or the map is zoomed out.
+            guard let stop = model.stops.first(where: { $0.id == id }) ?? model.personalization.knownStop(id: id) else {
+                selectedStopID = nil  // unknown id (scrolled out before we could resolve it)
                 return
             }
+            selectedStop = stop
             departures.select(stop: stop)
+            model.personalization.recordStopView(stop)
             selectedVehicleID = nil
             isFollowing = false
             center(on: stop)
@@ -103,10 +126,21 @@ struct RootView: View {
                 return
             }
             selectedStopID = nil
-            if let serviceJourneyID = model.vehicles[id]?.serviceJourneyId {
+            let vehicle = model.vehicles[id]
+            if let serviceJourneyID = vehicle?.serviceJourneyId {
                 journey.select(serviceJourneyId: serviceJourneyID)
             } else {
                 journey.deselect()
+            }
+            // Record the line (not the ephemeral vehicle) as "recently viewed".
+            if let vehicle, let ref = vehicle.lineRef, !ref.isEmpty {
+                model.personalization.recordLineView(
+                    lineRef: ref,
+                    publicCode: vehicle.publicCode,
+                    name: vehicle.lineName,
+                    mode: vehicle.mode,
+                    destination: vehicle.destinationName
+                )
             }
         }
         // Follow mode: recenter on the tracked vehicle whenever its position changes. `followKey` is
@@ -184,6 +218,13 @@ struct RootView: View {
         }
         ToolbarItem(placement: .primaryAction) {
             Button {
+                openSaved()
+            } label: {
+                Label("Lagret", systemImage: "star")
+            }
+        }
+        ToolbarItem(placement: .primaryAction) {
+            Button {
                 toggleFollow()
             } label: {
                 Label("Følg", systemImage: isFollowing ? "dot.scope" : "scope")
@@ -218,12 +259,16 @@ struct RootView: View {
             VehicleDetailView(
                 vehicle: vehicle,
                 colors: model.lineColors.colors(for: vehicle),
-                journey: journey
+                journey: journey,
+                isWatched: model.personalization.isWatched(lineRef: vehicle.lineRef ?? ""),
+                onToggleWatch: { model.toggleWatched(for: vehicle) }
             )
         } else if selectedStopID != nil {
             StopDetailView(
                 model: departures,
                 liveServiceJourneyIDs: model.liveServiceJourneyIDs,
+                isFavorite: selectedStop.map { model.personalization.isFavorite(stopID: $0.id) } ?? false,
+                onToggleFavorite: { if let stop = selectedStop { model.personalization.toggleFavorite(stop) } },
                 onSelectDeparture: selectDeparture
             )
         } else {
@@ -251,6 +296,39 @@ struct RootView: View {
     private func toggleFollow() {
         guard selectedVehicleID != nil else { return }
         withAnimation(.snappy) { isFollowing.toggle() }
+    }
+
+    /// Opens the "Lagret" sheet. Clears any current selection first so the detail (a sheet on iOS)
+    /// is gone before the saved sheet presents — two sheets can't share a presenter.
+    private func openSaved() {
+        selectedVehicleID = nil
+        selectedStopID = nil
+        isFollowing = false
+        showSaved = true
+    }
+
+    /// Applies the choice made in the "Lagret" sheet once it has finished dismissing.
+    private func applySavedSelection() {
+        if let stop = pendingSavedStop {
+            pendingSavedStop = nil
+            openStop(stop)
+        } else if let line = pendingSavedLine {
+            pendingSavedLine = nil
+            openLine(line)
+        }
+    }
+
+    /// Opens a saved stop's departures board. Setting the id drives the stop `.onChange`, which
+    /// resolves it (via `knownStop`), starts the poll, records the view, and centres the map.
+    private func openStop(_ stop: Stop) {
+        selectedStopID = stop.id
+    }
+
+    /// Watches a saved line (so it's shown + emphasized on the map) and reveals the map.
+    private func openLine(_ line: SavedLine) {
+        if !model.personalization.isWatched(lineRef: line.lineRef) {
+            model.toggleWatched(line)
+        }
     }
 
     private func recenter() {
