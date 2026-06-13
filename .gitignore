@@ -13,6 +13,9 @@ build/
 .build/
 .swiftpm/
 
+# Claude Code (personal, per-project overrides)
+.claude/settings.local.json
+
 # Misc
 .prettiercache
 *.moved-aside
