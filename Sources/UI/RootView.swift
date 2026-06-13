@@ -8,6 +8,7 @@ struct RootView: View {
 
     @State private var location = LocationProvider()
     @State private var departures = DeparturesModel()
+    @State private var journey = JourneyModel()
     @State private var cameraPosition: MapCameraPosition = .region(.underveisDefault)
     @State private var currentCamera: MapCamera?
     @State private var selectedVehicleID: String?
@@ -30,7 +31,11 @@ struct RootView: View {
                 selectedVehicleID: $selectedVehicleID,
                 selectedStopID: $selectedStopID,
                 currentCamera: $currentCamera,
-                isFollowing: $isFollowing
+                isFollowing: $isFollowing,
+                routeCoordinates: journey.routeCoordinates,
+                routeColor: routeColor,
+                journeyStops: journey.calls,
+                nextStopID: journey.nextStopID(for: followedVehicle)
             )
             .overlay(alignment: .topLeading) {
                 StatusPill(status: model.status, count: model.visibleVehicles.count)
@@ -90,9 +95,19 @@ struct RootView: View {
             center(on: stop)
         }
         // The reverse direction: picking a vehicle clears any selected stop (whose .onChange then
-        // tears down the poll).
+        // tears down the poll) and starts loading that vehicle's journey (route + stops). A vehicle
+        // without a service journey, or a deselection, tears the journey down.
         .onChange(of: selectedVehicleID) { _, newID in
-            if newID != nil { selectedStopID = nil }
+            guard let id = newID else {
+                journey.deselect()
+                return
+            }
+            selectedStopID = nil
+            if let serviceJourneyID = model.vehicles[id]?.serviceJourneyId {
+                journey.select(serviceJourneyId: serviceJourneyID)
+            } else {
+                journey.deselect()
+            }
         }
         // Follow mode: recenter on the tracked vehicle whenever its position changes. `followKey` is
         // nil when not following, so this no-ops then. On the transition into following (old key was
@@ -127,6 +142,12 @@ struct RootView: View {
     private var followedVehicle: Vehicle? {
         guard let id = selectedVehicleID else { return nil }
         return model.vehicles[id]
+    }
+
+    /// Colour for the selected vehicle's route line — its line colour, or the mode-fallback tint.
+    private var routeColor: Color {
+        guard let vehicle = followedVehicle else { return .accentColor }
+        return model.lineColors.colors(for: vehicle).tint
     }
 
     /// Changes whenever the followed vehicle moves — drives the recenter `onChange`.
@@ -194,7 +215,11 @@ struct RootView: View {
     @ViewBuilder
     private var inspectorContent: some View {
         if let id = selectedVehicleID, let vehicle = model.vehicles[id] {
-            VehicleDetailView(vehicle: vehicle, colors: model.lineColors.colors(for: vehicle))
+            VehicleDetailView(
+                vehicle: vehicle,
+                colors: model.lineColors.colors(for: vehicle),
+                journey: journey
+            )
         } else if selectedStopID != nil {
             StopDetailView(
                 model: departures,

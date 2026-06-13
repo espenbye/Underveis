@@ -48,10 +48,37 @@ struct BusMapView: View {
     @Binding var selectedStopID: String?
     @Binding var currentCamera: MapCamera?
     @Binding var isFollowing: Bool
+    /// The selected vehicle's route line (empty when nothing is selected or it has no journey).
+    let routeCoordinates: [CLLocationCoordinate2D]
+    /// Colour for the route line + its stop dots — the line colour, or the mode-fallback tint.
+    let routeColor: Color
+    /// Stops along the selected journey, drawn as small dots over the route line.
+    let journeyStops: [JourneyCall]
+    /// The next stop the vehicle is heading to, drawn larger/filled.
+    let nextStopID: String?
 
     var body: some View {
         MapReader { proxy in
             Map(position: $cameraPosition) {
+                // The selected vehicle's route, beneath everything else.
+                if routeCoordinates.count > 1 {
+                    MapPolyline(coordinates: routeCoordinates)
+                        .stroke(
+                            routeColor.opacity(0.85),
+                            style: StrokeStyle(lineWidth: 5, lineCap: .round, lineJoin: .round)
+                        )
+                }
+
+                // Journey stop dots sit above the route line but below the markers. Decorative only —
+                // hit-testing is disabled so they don't interfere with empty-map-tap clearing.
+                ForEach(journeyStops) { call in
+                    Annotation(call.quayName, coordinate: call.coordinate) {
+                        JourneyStopDot(color: routeColor, isNext: call.id == nextStopID)
+                            .allowsHitTesting(false)
+                    }
+                    .annotationTitles(.hidden)
+                }
+
                 // Stops first so the colourful vehicle markers draw on top of them.
                 ForEach(model.stops) { stop in
                     Annotation(stop.name, coordinate: stop.coordinate) {
@@ -141,5 +168,20 @@ struct BusMapView: View {
 private extension CGPoint {
     func distance(to other: CGPoint) -> CGFloat {
         hypot(x - other.x, y - other.y)
+    }
+}
+
+/// A small dot marking a stop along the selected vehicle's route. The next stop is drawn larger and
+/// filled in the line colour; the rest are subdued white pips with a coloured ring.
+private struct JourneyStopDot: View {
+    let color: Color
+    let isNext: Bool
+
+    var body: some View {
+        Circle()
+            .fill(isNext ? AnyShapeStyle(color) : AnyShapeStyle(.white))
+            .frame(width: isNext ? 14 : 9, height: isNext ? 14 : 9)
+            .overlay(Circle().strokeBorder(color, lineWidth: 2))
+            .shadow(color: .black.opacity(0.2), radius: 1, y: 0.5)
     }
 }

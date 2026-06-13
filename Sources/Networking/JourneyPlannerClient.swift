@@ -110,6 +110,41 @@ actor JourneyPlannerClient {
         return DeparturesResult(stopName: stopPlace.name ?? "", departures: departures)
     }
 
+    /// The full scheduled trip for one service journey (NeTEx id): its route geometry plus every
+    /// estimated call. A live `Vehicle.serviceJourneyId` is exactly this query's `id`. Returns `nil`
+    /// on a network/decode failure so callers keep last-known data instead of blanking.
+    func serviceJourney(id: String) async -> JourneyDetail? {
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(clientName, forHTTPHeaderField: "ET-Client-Name")
+
+        let operation = GraphQLOperation(
+            query: Self.serviceJourneyQuery,
+            variables: ServiceJourneyVariables(id: id),
+            operationName: "SJ"
+        )
+        guard let body = try? encoder.encode(operation) else { return nil }
+        request.httpBody = body
+
+        guard let (data, _) = try? await session.data(for: request),
+            let response = try? decoder.decode(ServiceJourneyResponse.self, from: data),
+            let journey = response.data?.serviceJourney
+        else { return nil }
+
+        let routePoints = journey.pointsOnLink?.points.map(Polyline.decode) ?? []
+        let calls = (journey.estimatedCalls ?? []).compactMap { $0?.toCall(using: parseISO) }
+        return JourneyDetail(
+            serviceJourneyId: journey.id ?? id,
+            linePublicCode: journey.line?.publicCode,
+            lineName: journey.line?.name,
+            colourHex: journey.line?.presentation?.colour,
+            textColourHex: journey.line?.presentation?.textColour,
+            routePoints: routePoints,
+            calls: calls
+        )
+    }
+
     /// Parses Entur's ISO-8601 timestamps (`2026-06-13T12:22:38+02:00`, with or without fractional
     /// seconds). Fractional first since that variant is stricter.
     private func parseISO(_ string: String?) -> Date? {
@@ -164,6 +199,28 @@ actor JourneyPlannerClient {
                 id
                 line { id publicCode name transportMode presentation { colour textColour } }
               }
+            }
+          }
+        }
+        """
+
+    private static let serviceJourneyQuery = """
+        query SJ($id: String!) {
+          serviceJourney(id: $id) {
+            id
+            line { id publicCode name presentation { colour textColour } }
+            pointsOnLink { length points }
+            estimatedCalls {
+              realtime
+              cancellation
+              predictionInaccurate
+              aimedArrivalTime
+              expectedArrivalTime
+              actualArrivalTime
+              aimedDepartureTime
+              expectedDepartureTime
+              actualDepartureTime
+              quay { id name latitude longitude publicCode }
             }
           }
         }
@@ -333,6 +390,93 @@ private struct DeparturesResponse: Decodable {
         let name: String?
         let transportMode: String?
         let presentation: PresentationDTO?
+    }
+
+    struct PresentationDTO: Decodable {
+        let colour: String?
+        let textColour: String?
+    }
+}
+
+private struct ServiceJourneyVariables: Encodable, Sendable {
+    let id: String
+}
+
+private struct ServiceJourneyResponse: Decodable {
+    let data: DataField?
+
+    struct DataField: Decodable {
+        let serviceJourney: ServiceJourneyDTO?
+    }
+
+    struct ServiceJourneyDTO: Decodable {
+        let id: String?
+        let line: LineDTO?
+        let pointsOnLink: PointsOnLinkDTO?
+        let estimatedCalls: [CallDTO?]?
+    }
+
+    struct LineDTO: Decodable {
+        let id: String?
+        let publicCode: String?
+        let name: String?
+        let presentation: PresentationDTO?
+    }
+
+    struct PointsOnLinkDTO: Decodable {
+        let length: Double?
+        let points: String?
+    }
+
+    struct CallDTO: Decodable {
+        let realtime: Bool?
+        let cancellation: Bool?
+        let predictionInaccurate: Bool?
+        let aimedArrivalTime: String?
+        let expectedArrivalTime: String?
+        let actualArrivalTime: String?
+        let aimedDepartureTime: String?
+        let expectedDepartureTime: String?
+        let actualDepartureTime: String?
+        let quay: QuayDTO?
+
+        /// Maps one call to a `JourneyCall`, dropping any call without a stable quay identity or
+        /// coordinates. All six time strings are parsed via the actor's ISO-8601 parser; an origin or
+        /// terminus legitimately leaves some `nil`. `parse` is passed in to keep the mapping pure.
+        func toCall(using parse: (String?) -> Date?) -> JourneyCall? {
+            guard let quayId = quay?.id,
+                let quayName = quay?.name,
+                let latitude = quay?.latitude,
+                let longitude = quay?.longitude
+            else { return nil }
+
+            let timeKey = aimedDepartureTime ?? aimedArrivalTime ?? ""
+            return JourneyCall(
+                id: "\(quayId)|\(timeKey)",
+                quayId: quayId,
+                quayName: quayName,
+                latitude: latitude,
+                longitude: longitude,
+                publicCode: quay?.publicCode,
+                aimedArrival: parse(aimedArrivalTime),
+                expectedArrival: parse(expectedArrivalTime),
+                actualArrival: parse(actualArrivalTime),
+                aimedDeparture: parse(aimedDepartureTime),
+                expectedDeparture: parse(expectedDepartureTime),
+                actualDeparture: parse(actualDepartureTime),
+                isRealtime: realtime ?? false,
+                isCancelled: cancellation ?? false,
+                predictionInaccurate: predictionInaccurate ?? false
+            )
+        }
+    }
+
+    struct QuayDTO: Decodable {
+        let id: String?
+        let name: String?
+        let latitude: Double?
+        let longitude: Double?
+        let publicCode: String?
     }
 
     struct PresentationDTO: Decodable {

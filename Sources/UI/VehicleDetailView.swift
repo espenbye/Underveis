@@ -5,6 +5,8 @@ import SwiftUI
 struct VehicleDetailView: View {
     let vehicle: Vehicle
     let colors: LineColorStore.ResolvedColors
+    /// The vehicle's journey (route + stop calls), owned by `RootView` and shared with the map.
+    let journey: JourneyModel
 
     /// Drives the Look Around "ride along" preview, refetching as the vehicle moves.
     @State private var rideAlong = RideAlongModel()
@@ -24,6 +26,10 @@ struct VehicleDetailView: View {
                 rideAlongSection
                 Divider()
                 facts
+                if vehicle.serviceJourneyId != nil {
+                    Divider()
+                    journeySection
+                }
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -178,6 +184,181 @@ struct VehicleDetailView: View {
         let minutes = Int((delay / 60).rounded())
         if minutes == 0 { return "I rute" }
         return minutes > 0 ? "\(minutes) min forsinket" : "\(-minutes) min før rute"
+    }
+
+    /// The stop-by-stop list for the journey: passed stops dim, the next stop is highlighted, and the
+    /// rest show their expected arrival. `journey.tickID` keeps the countdowns live between polls.
+    @ViewBuilder
+    private var journeySection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Stopp på ruten", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.secondary)
+            journeyContent
+        }
+    }
+
+    @ViewBuilder
+    private var journeyContent: some View {
+        switch journey.loadState {
+        case .idle, .loading:
+            HStack {
+                Spacer()
+                ProgressView()
+                Spacer()
+            }
+            .frame(minHeight: 80)
+        case .failed(let message):
+            Label(message, systemImage: "exclamationmark.triangle")
+                .font(.callout)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity, minHeight: 60)
+        case .loaded:
+            if journey.calls.isEmpty {
+                Label("Ingen stoppinformasjon", systemImage: "mappin.slash")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, minHeight: 60)
+            } else {
+                let calls = journey.calls
+                let statuses = journey.statuses(for: vehicle)
+                VStack(spacing: 0) {
+                    ForEach(Array(calls.enumerated()), id: \.element.id) { index, call in
+                        JourneyCallRow(
+                            call: call,
+                            status: statuses[call.id] ?? .upcoming,
+                            tint: colors.tint,
+                            tickID: journey.tickID,
+                            isFirst: index == 0,
+                            isLast: index == calls.count - 1
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// One stop on the journey: a timeline rail with a dot, the stop name, and its time. The dot/line and
+/// the trailing time restyle by `status` (passed → dimmed, next → highlighted, upcoming → normal).
+/// `tickID` is passed only to force a per-second re-render so the live ETA stays current.
+private struct JourneyCallRow: View {
+    let call: JourneyCall
+    let status: JourneyModel.CallStatus
+    let tint: Color
+    let tickID: Int
+    let isFirst: Bool
+    let isLast: Bool
+
+    var body: some View {
+        HStack(spacing: 12) {
+            rail
+            VStack(alignment: .leading, spacing: 2) {
+                Text(call.quayName)
+                    .font(.callout.weight(status == .next ? .semibold : .regular))
+                    .strikethrough(call.isCancelled)
+                    .foregroundStyle(status == .passed ? AnyShapeStyle(.secondary) : AnyShapeStyle(.primary))
+                    .lineLimit(1)
+                if let quay = call.publicCode {
+                    Text("Spor \(quay)")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            Spacer(minLength: 8)
+            trailing
+        }
+        .padding(.vertical, 6)
+        .frame(minHeight: 34)
+    }
+
+    /// A continuous vertical rail (trimmed at the first/last stop) with the stop's dot on it.
+    private var rail: some View {
+        ZStack {
+            VStack(spacing: 0) {
+                Rectangle().fill(isFirst ? AnyShapeStyle(.clear) : AnyShapeStyle(railColor))
+                Rectangle().fill(isLast ? AnyShapeStyle(.clear) : AnyShapeStyle(railColor))
+            }
+            .frame(width: 2)
+
+            Circle()
+                .fill(status == .passed ? AnyShapeStyle(.secondary) : AnyShapeStyle(tint))
+                .frame(width: status == .next ? 13 : 9, height: status == .next ? 13 : 9)
+                .overlay(Circle().strokeBorder(.background, lineWidth: 2))
+        }
+        .frame(width: 18)
+    }
+
+    private var railColor: Color { tint.opacity(0.35) }
+
+    @ViewBuilder
+    private var trailing: some View {
+        // Reading Date() here (re-run whenever `tickID` changes) is what makes the countdown live.
+        let now = Date()
+        if call.isCancelled {
+            Text("Innstilt")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.red)
+        } else if status == .passed {
+            if let time = stopTime {
+                Text(clock(time))
+                    .font(.caption)
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+            }
+        } else {
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(headline(now: now))
+                    .font(.callout.weight(status == .next ? .semibold : .regular))
+                    .monospacedDigit()
+                    .foregroundStyle(headlineColor)
+                if let caption {
+                    Text(caption)
+                        .font(.caption2)
+                        .foregroundStyle(isDelayed ? AnyShapeStyle(Color.orange) : AnyShapeStyle(.secondary))
+                }
+            }
+        }
+    }
+
+    /// When the vehicle is expected at this stop (arrival, falling back to departure).
+    private var stopTime: Date? { call.effectiveArrival ?? call.effectiveDeparture }
+
+    /// Big line for an upcoming stop: "Nå" / "N min" / clock time for distant stops.
+    private func headline(now: Date) -> String {
+        guard let time = stopTime else { return "" }
+        let remaining = time.timeIntervalSince(now)
+        if remaining < 60 { return "Nå" }
+        let minutes = Int(remaining / 60)
+        let prefix = call.predictionInaccurate && call.isRealtime ? "~" : ""
+        if minutes < 60 { return "\(prefix)\(minutes) min" }
+        return clock(time)
+    }
+
+    /// Secondary line: the clock time, with a "forsinket" note when running late.
+    private var caption: String? {
+        guard let time = stopTime else { return nil }
+        return isDelayed ? "\(clock(time)) · forsinket" : clock(time)
+    }
+
+    private var headlineColor: AnyShapeStyle {
+        if isDelayed { return AnyShapeStyle(Color.orange) }
+        return status == .next ? AnyShapeStyle(.primary) : AnyShapeStyle(.secondary)
+    }
+
+    /// At least a minute behind timetable, measured on whichever pair (arrival/departure) is available.
+    private var isDelayed: Bool {
+        if let expected = call.expectedArrival, let aimed = call.aimedArrival {
+            return expected.timeIntervalSince(aimed) >= 60
+        }
+        if let expected = call.expectedDeparture, let aimed = call.aimedDeparture {
+            return expected.timeIntervalSince(aimed) >= 60
+        }
+        return false
+    }
+
+    private func clock(_ date: Date) -> String {
+        "kl. " + date.formatted(date: .omitted, time: .shortened)
     }
 }
 
