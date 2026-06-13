@@ -1,0 +1,22 @@
+# Xcode / xcodegen
+*.xcodeproj/
+!project.yml
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+
+# macOS
+.DS_Store
+
+# Swift Package Manager
+.build/
+.swiftpm/
+
+# Misc
+.prettiercache
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
