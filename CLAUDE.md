@@ -18,8 +18,8 @@ make build-ios   # build for the iOS Simulator
 
 - **`Bussradar.xcodeproj` is generated and git-ignored.** Never edit it by hand — change `project.yml`
   and run `make generate`. Adding/removing source files also requires a regen.
-- **Signing:** `DEVELOPMENT_TEAM` is intentionally blank (`CODE_SIGN_STYLE = Automatic`). Set the
-  "Espen Bye" team once in Xcode → Signing & Capabilities.
+- **Signing:** Automatic, with the **Espen Bye** team (`DEVELOPMENT_TEAM = 9QD8BJRLPC`) set in
+  `project.yml` — builds sign without manual Xcode setup.
 - App icon (`Resources/Assets.xcassets/AppIcon.appiconset`) is currently iOS-only (1024 single-size).
 
 ## Architecture

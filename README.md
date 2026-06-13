@@ -22,9 +22,8 @@ real-time vehicle API.
 make open        # generate the Xcode project and open it
 ```
 
-Then, once, in Xcode → the **Bussradar** target → **Signing & Capabilities**, pick the
-**Espen Bye** team (signing is set to Automatic; the team is intentionally left blank in
-`project.yml`).
+Signing uses Automatic code signing with the **Espen Bye** team (`DEVELOPMENT_TEAM = 9QD8BJRLPC`,
+set in `project.yml`), so it builds and signs without any manual Xcode setup.
 
 ### Command line
 
