@@ -12,12 +12,19 @@ settings:
   base:
     SWIFT_VERSION: "6.0"
     SWIFT_STRICT_CONCURRENCY: complete
+    # Xcode-recommended project settings (kept here so `make generate` preserves them).
+    DEAD_CODE_STRIPPING: YES
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+    STRING_CATALOG_GENERATE_SYMBOLS: YES
     DEVELOPMENT_TEAM: 9QD8BJRLPC # "Espen Bye" (personal team)
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
     GENERATE_INFOPLIST_FILE: YES
     INFOPLIST_KEY_UILaunchScreen_Generation: YES
+    # iPad must support all four orientations (it isn't full-screen-only); iPhone keeps the usual three.
+    "INFOPLIST_KEY_UISupportedInterfaceOrientations~ipad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+    "INFOPLIST_KEY_UISupportedInterfaceOrientations~iphone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
     INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Underveis viser kollektivtrafikk i nærheten av deg på kartet."
     # Entitlements only apply when building for macOS (App Sandbox + outbound network + location).
     "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Underveis.entitlements
