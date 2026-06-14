@@ -15,9 +15,6 @@ struct StopDetailView: View {
     /// Whether this stop is a favourite, and a toggle for it (the star in the header).
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
-    /// Whether a departure has a running Live Activity, and a toggle for it (iOS only).
-    let isLiveActivityActive: (Departure) -> Bool
-    let onToggleLiveActivity: (Departure) -> Void
     /// Invoked when a live row is tapped — locates and highlights its vehicle.
     let onSelectDeparture: (Departure) -> Void
 
@@ -122,10 +119,8 @@ struct StopDetailView: View {
                             tickID: model.tickID,
                             isLive: liveServiceJourneyIDs.contains(departure.serviceJourneyId),
                             hasReminder: reminders.isReminderSet(for: departure),
-                            hasLiveActivity: isLiveActivityActive(departure),
                             onTap: { onSelectDeparture(departure) },
-                            onToggleReminder: { toggleReminder(for: departure) },
-                            onToggleLiveActivity: { onToggleLiveActivity(departure) }
+                            onToggleReminder: { toggleReminder(for: departure) }
                         )
                         if departure.id != model.departures.last?.id {
                             Divider()
@@ -157,17 +152,13 @@ private struct DepartureRow: View {
     let isLive: Bool
     /// Whether a departure reminder is currently scheduled (fills the bell).
     let hasReminder: Bool
-    /// Whether a Live Activity is running for this departure (fills the timer toggle, iOS only).
-    let hasLiveActivity: Bool
     let onTap: () -> Void
     let onToggleReminder: () -> Void
-    let onToggleLiveActivity: () -> Void
 
     var body: some View {
-        // The toggles are siblings of the (optionally tappable) content so they never nest as buttons.
+        // The bell is a sibling of the (optionally tappable) content so the two never nest as buttons.
         HStack(spacing: 8) {
             tappableContent
-            liveActivityButton
             reminderButton
         }
         .padding(.vertical, 8)
@@ -212,25 +203,6 @@ private struct DepartureRow: View {
             trailing
         }
         .contentShape(Rectangle())
-    }
-
-    /// Live Activity toggle (iOS only). Like the reminder bell, it's hidden once a trip has departed
-    /// or been cancelled — there's nothing left to count down to.
-    @ViewBuilder
-    private var liveActivityButton: some View {
-        #if os(iOS)
-            if departure.actualDeparture == nil && !departure.isCancelled {
-                Button(action: onToggleLiveActivity) {
-                    Image(systemName: hasLiveActivity ? "timer.circle.fill" : "timer.circle")
-                        .font(.callout)
-                        .foregroundStyle(hasLiveActivity ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
-                        .frame(width: 30, height: 30)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(hasLiveActivity ? "Stopp nedtelling på låseskjerm" : "Vis nedtelling på låseskjerm")
-            }
-        #endif
     }
 
     /// Reminder toggle. Hidden once a trip has departed or been cancelled — there's nothing to remind

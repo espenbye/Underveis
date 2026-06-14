@@ -29,8 +29,6 @@ settings:
     # use non-exempt encryption. Baking this in suppresses App Store Connect's per-build prompt.
     INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
     INFOPLIST_KEY_UILaunchScreen_Generation: YES
-    # Opt the app in to Live Activities (departure countdown on the Lock Screen / Dynamic Island).
-    INFOPLIST_KEY_NSSupportsLiveActivities: YES
     # iPad must support all four orientations (it isn't full-screen-only); iPhone keeps the usual three.
     # NB: the build-setting names use the `_iPad`/`_iPhone` suffix — the `~ipad`/`~iphone` tilde form
     # is not a valid build-setting name and Xcode silently drops it, leaving the plist with no
@@ -52,10 +50,6 @@ targets:
     sources:
       - path: Sources
       - path: Resources
-    dependencies:
-      # The widget extension is iOS-only; embed it in the app (the macOS variant is handled below).
-      - target: UnderveisWidgets
-        embed: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: no.espenbye.underveis
@@ -64,38 +58,6 @@ targets:
         INFOPLIST_KEY_LSApplicationCategoryType: "public.app-category.navigation"
         INFOPLIST_KEY_CFBundleDisplayName: Underveis
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-
-  UnderveisWidgets:
-    type: app-extension
-    # The home-screen / Lock Screen widget runs on iOS *and* macOS; only the Live Activity inside is
-    # iOS-only (guarded with `#if os(iOS)` in the widget bundle).
-    supportedDestinations: [iOS, macOS]
-    deploymentTarget:
-      iOS: "26.0"
-      macOS: "26.0"
-    sources:
-      - path: Widgets
-      # Source shared with the app target (each target compiles its own copy — no framework needed).
-      - path: Sources/Shared
-      - path: Sources/Models/Departure.swift
-      - path: Sources/UI/DepartureFormatting.swift
-      - path: Sources/Support/Color+Hex.swift
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: no.espenbye.underveis.widgets
-        PRODUCT_NAME: UnderveisWidgets
-        TARGETED_DEVICE_FAMILY: "1,2"
-        # This target ships an explicit Info.plist (for the NSExtension dict), so don't also generate
-        # one. On macOS an app extension must be sandboxed and needs the outbound-network entitlement
-        # (the widget fetches stops + departures); iOS extensions need neither, so it's macOS-only.
-        GENERATE_INFOPLIST_FILE: NO
-        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Widgets/UnderveisWidgets.macOS.entitlements
-    info:
-      path: Widgets/Info.plist
-      properties:
-        CFBundleDisplayName: Underveis
-        NSExtension:
-          NSExtensionPointIdentifier: com.apple.widgetkit-extension
 
 schemes:
   Underveis:
