@@ -21,6 +21,9 @@ settings:
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
     GENERATE_INFOPLIST_FILE: YES
+    # The app only uses standard HTTPS/WSS (TLS to Entur), which is exempt encryption — so it doesn't
+    # use non-exempt encryption. Baking this in suppresses App Store Connect's per-build prompt.
+    INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
     INFOPLIST_KEY_UILaunchScreen_Generation: YES
     # iPad must support all four orientations (it isn't full-screen-only); iPhone keeps the usual three.
     "INFOPLIST_KEY_UISupportedInterfaceOrientations~ipad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
