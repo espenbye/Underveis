@@ -20,6 +20,7 @@
 		4C5C705A1C3F4C1D88CB1777 /* LineColorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3520848B9608472F33F0CEBD /* LineColorStore.swift */; };
 		4C8D1FC4B3D6AE9B4A0F851B /* DeparturesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDFDB8DFF5877F180638D50 /* DeparturesModel.swift */; };
 		4FECE28314B82E0786B470E3 /* VehiclesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381734EED10B79667C135A1 /* VehiclesModel.swift */; };
+		53BB4BA7BA200225E056DA0B /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1F5E94CDA04FF3390CFE6B41 /* ReminderStore.swift */; };
 		53C321D5BE3E83C2BEE320A2 /* CachedLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF1308D34BC170809B4BB70 /* CachedLine.swift */; };
 		5BAA202E3B57A3E2EBB84D1A /* Departure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140F8527BB9C0D8F9FCF130C /* Departure.swift */; };
 		627BD311D230CB1E5270EEEE /* PersonalizationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84CA4D7C457C8F3C4C16B60 /* PersonalizationStore.swift */; };
@@ -51,6 +52,7 @@
 		1A31A04DF937A0381BF574D1 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		1BAA1463019458215C62A602 /* JourneyDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetail.swift; sourceTree = "<group>"; };
 		1BC4D2AF42F51A5C5D9C3F34 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		1F5E94CDA04FF3390CFE6B41 /* ReminderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderStore.swift; sourceTree = "<group>"; };
 		20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleDetailView.swift; sourceTree = "<group>"; };
 		2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnturVehiclesClient.swift; sourceTree = "<group>"; };
 		2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vehicle.swift; sourceTree = "<group>"; };
@@ -193,6 +195,7 @@
 				72B206E00AF017F35FFF0A4D /* JourneyModel.swift */,
 				C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */,
 				B616C574132CC94EB9ED4B68 /* NearbyModel.swift */,
+				1F5E94CDA04FF3390CFE6B41 /* ReminderStore.swift */,
 				6E7878F97A231438F93E79A8 /* RideAlongModel.swift */,
 				8381734EED10B79667C135A1 /* VehiclesModel.swift */,
 			);
@@ -313,6 +316,7 @@
 				04242C4ECF1F4F28B94FB1D4 /* PersonalizationModels.swift in Sources */,
 				627BD311D230CB1E5270EEEE /* PersonalizationStore.swift in Sources */,
 				EC8BACF3B12AA2687044CF97 /* Polyline.swift in Sources */,
+				53BB4BA7BA200225E056DA0B /* ReminderStore.swift in Sources */,
 				3C0EE84B4B1E4FE63849547C /* RideAlongModel.swift in Sources */,
 				BF7D17221F466D9EBDA8D7F3 /* RootView.swift in Sources */,
 				227FD61AD96602DE1B88CEC0 /* SavedView.swift in Sources */,

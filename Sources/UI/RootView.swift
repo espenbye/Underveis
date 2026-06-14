@@ -15,6 +15,7 @@ struct RootView: View {
     @State private var departures = DeparturesModel()
     @State private var journey = JourneyModel()
     @State private var nearby = NearbyModel()
+    @State private var reminders = ReminderStore()
     @State private var cameraPosition: MapCameraPosition = .region(.underveisDefault)
     @State private var currentCamera: MapCamera?
     @State private var selectedVehicleID: String?
@@ -66,6 +67,7 @@ struct RootView: View {
             location.requestAndStart()
             model.start()
             model.updateViewport(.underveisDefault)
+            await reminders.refresh()
         }
         .onChange(of: location.fixCount) {
             if selectedTab == .nearby, let coordinate = location.coordinate { nearby.update(coordinate: coordinate) }
@@ -100,6 +102,7 @@ struct RootView: View {
             }
             selectedStop = stop
             departures.select(stop: stop)
+            Task { await reminders.refresh() }
             model.personalization.recordStopView(stop)
             selectedVehicleID = nil
             isFollowing = false
@@ -321,6 +324,7 @@ struct RootView: View {
             StopDetailView(
                 model: departures,
                 liveServiceJourneyIDs: model.liveServiceJourneyIDs,
+                reminders: reminders,
                 isFavorite: selectedStop.map { model.personalization.isFavorite(stopID: $0.id) } ?? false,
                 onToggleFavorite: { if let stop = selectedStop { model.personalization.toggleFavorite(stop) } },
                 onSelectDeparture: selectDeparture

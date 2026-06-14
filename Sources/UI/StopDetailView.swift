@@ -1,4 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
+    import UIKit
+#endif
 
 /// Live departure board for the selected stop, shown in the inspector / bottom sheet. Mirrors
 /// `VehicleDetailView`'s layout; `DeparturesModel` drives the data, polling every 30 s while a
@@ -7,11 +10,17 @@ struct StopDetailView: View {
     let model: DeparturesModel
     /// Service-journey ids with a live vehicle on the map; those rows become tappable.
     let liveServiceJourneyIDs: Set<String>
+    /// Schedules/tracks per-departure reminders behind the bell on each row.
+    let reminders: ReminderStore
     /// Whether this stop is a favourite, and a toggle for it (the star in the header).
     let isFavorite: Bool
     let onToggleFavorite: () -> Void
     /// Invoked when a live row is tapped — locates and highlights its vehicle.
     let onSelectDeparture: (Departure) -> Void
+
+    /// Raised when a reminder tap finds notifications switched off, prompting the user to enable them.
+    @State private var showPermissionAlert = false
+    @Environment(\.openURL) private var openURL
 
     var body: some View {
         ScrollView {
@@ -23,6 +32,24 @@ struct StopDetailView: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .alert("Varsler er av", isPresented: $showPermissionAlert) {
+            Button("OK", role: .cancel) {}
+            #if os(iOS)
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    Button("Åpne Innstillinger") { openURL(url) }
+                }
+            #endif
+        } message: {
+            Text("Slå på varsler for Underveis for å få påminnelser om avganger.")
+        }
+    }
+
+    /// Toggles a reminder, then surfaces the permission alert if notifications turned out to be off.
+    private func toggleReminder(for departure: Departure) {
+        Task {
+            await reminders.toggle(departure, stopName: model.stopName)
+            if reminders.permissionDenied { showPermissionAlert = true }
         }
     }
 
@@ -91,7 +118,9 @@ struct StopDetailView: View {
                             departure: departure,
                             tickID: model.tickID,
                             isLive: liveServiceJourneyIDs.contains(departure.serviceJourneyId),
-                            onTap: { onSelectDeparture(departure) }
+                            hasReminder: reminders.isReminderSet(for: departure),
+                            onTap: { onSelectDeparture(departure) },
+                            onToggleReminder: { toggleReminder(for: departure) }
                         )
                         if departure.id != model.departures.last?.id {
                             Divider()
@@ -113,16 +142,30 @@ struct StopDetailView: View {
     }
 }
 
-/// One row of the departure board: line badge, destination + platform, and a live countdown over the
-/// clock time. `tickID` is passed only to force a re-render each second so the countdown stays current.
+/// One row of the departure board: line badge, destination + platform, a live countdown over the
+/// clock time, and a reminder bell. `tickID` is passed only to force a re-render each second so the
+/// countdown stays current.
 private struct DepartureRow: View {
     let departure: Departure
     let tickID: Int
     /// Whether a vehicle for this trip is on the map right now; live rows are tappable.
     let isLive: Bool
+    /// Whether a departure reminder is currently scheduled (fills the bell).
+    let hasReminder: Bool
     let onTap: () -> Void
+    let onToggleReminder: () -> Void
 
     var body: some View {
+        // The bell is a sibling of the (optionally tappable) content so the two never nest as buttons.
+        HStack(spacing: 8) {
+            tappableContent
+            reminderButton
+        }
+        .padding(.vertical, 8)
+    }
+
+    @ViewBuilder
+    private var tappableContent: some View {
         if isLive {
             Button(action: onTap) { row }
                 .buttonStyle(.plain)
@@ -159,8 +202,24 @@ private struct DepartureRow: View {
 
             trailing
         }
-        .padding(.vertical, 8)
         .contentShape(Rectangle())
+    }
+
+    /// Reminder toggle. Hidden once a trip has departed or been cancelled — there's nothing to remind
+    /// about — so the column simply collapses for those rows.
+    @ViewBuilder
+    private var reminderButton: some View {
+        if departure.actualDeparture == nil && !departure.isCancelled {
+            Button(action: onToggleReminder) {
+                Image(systemName: hasReminder ? "bell.fill" : "bell")
+                    .font(.callout)
+                    .foregroundStyle(hasReminder ? AnyShapeStyle(.tint) : AnyShapeStyle(.secondary))
+                    .frame(width: 30, height: 30)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(hasReminder ? "Fjern påminnelse" : "Påminn meg om avgang")
+        }
     }
 
     private var lineBadge: some View {

@@ -9,6 +9,8 @@ struct SettingsView: View {
     /// Owned here so "Nullstill appen" can return the map style to its default — `VehiclesModel`
     /// doesn't know about this preference. Same key/default as `RootView`.
     @AppStorage("mapStyle") private var mapStyleRaw = MapStyleOption.standard.rawValue
+    /// Minutes before a departure to fire its reminder. Key/default shared with `ReminderStore`.
+    @AppStorage(ReminderStore.leadMinutesKey) private var reminderLeadMinutes = ReminderStore.defaultLeadMinutes
     @State private var showResetConfirm = false
 
     private static let enturURL = URL(string: "https://developer.entur.org")
@@ -21,6 +23,16 @@ struct SettingsView: View {
                     showResetConfirm = true
                 } label: {
                     Label("Nullstill appen", systemImage: "trash")
+                }
+            }
+
+            Section("Påminnelser") {
+                Picker("Påminn meg før avgang", selection: $reminderLeadMinutes) {
+                    Text("1 minutt").tag(1)
+                    Text("2 minutter").tag(2)
+                    Text("5 minutter").tag(5)
+                    Text("10 minutter").tag(10)
+                    Text("15 minutter").tag(15)
                 }
             }
 
@@ -46,6 +58,7 @@ struct SettingsView: View {
             Button("Nullstill", role: .destructive) {
                 model.resetApp()
                 mapStyleRaw = MapStyleOption.standard.rawValue
+                reminderLeadMinutes = ReminderStore.defaultLeadMinutes
             }
             Button("Avbryt", role: .cancel) {}
         } message: {

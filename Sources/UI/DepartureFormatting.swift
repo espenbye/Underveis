@@ -32,4 +32,16 @@ extension Departure {
     var displayDestination: String {
         destinationFrontText.isEmpty ? (lineName ?? "Avgang") : destinationFrontText
     }
+
+    /// Reminder notification title — line number and destination, e.g. "12 → Kjelsås".
+    var reminderTitle: String {
+        let line = linePublicCode.isEmpty ? (lineName ?? "Avgang") : linePublicCode
+        return "\(line) → \(displayDestination)"
+    }
+
+    /// Reminder notification body — the predicted clock time, with the stop when known.
+    func reminderBody(stopName: String) -> String {
+        let time = expectedDeparture.formatted(date: .omitted, time: .shortened)
+        return stopName.isEmpty ? "Avgang kl. \(time)" : "Avgang kl. \(time) fra \(stopName)"
+    }
 }
