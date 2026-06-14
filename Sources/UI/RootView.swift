@@ -18,6 +18,9 @@ struct RootView: View {
     @State private var reminders = ReminderStore()
     @State private var cameraPosition: MapCameraPosition = .region(.underveisDefault)
     @State private var currentCamera: MapCamera?
+    /// Latest visible region, used by the map to size its clustering grid. Seeded with the launch
+    /// region so clustering is correct from the first frame.
+    @State private var currentRegion: MKCoordinateRegion? = .underveisDefault
     @State private var selectedVehicleID: String?
     @State private var selectedStopID: String?
     /// The resolved stop behind `selectedStopID` (from the map or a saved/recent snapshot). Held so
@@ -166,13 +169,14 @@ struct RootView: View {
     @ViewBuilder
     private var mapTab: some View {
         NavigationStack {
-            BusMapView(
+            VehicleMapView(
                 model: model,
                 mapStyle: mapStyle,
                 cameraPosition: $cameraPosition,
                 selectedVehicleID: $selectedVehicleID,
                 selectedStopID: $selectedStopID,
                 currentCamera: $currentCamera,
+                currentRegion: $currentRegion,
                 isFollowing: $isFollowing,
                 routeCoordinates: journey.routeCoordinates,
                 routeColor: routeColor,

@@ -38,7 +38,7 @@
 		9191D302A2F49C5524449FCC /* VehicleMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304222B0658C0B384AB28DA /* VehicleMode.swift */; };
 		93539A0B443C5C300A95910F /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B8A75CFE1EAF475547D09B /* Color+Hex.swift */; };
 		9ACDE64385B6F5D947771119 /* NearbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362657BD7C0E63F2C4092311 /* NearbyView.swift */; };
-		A0699FC2AB722C3010C97999 /* BusMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A53B2AB8AC5C95CF505D4A7 /* BusMapView.swift */; };
+		9DBC2DE77EA668727E3AA8A1 /* VehicleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB14187750304C8FB1BA5FF /* VehicleMapView.swift */; };
 		A8D49EAD32DEB1C2647DA9AD /* VehicleMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90F9209670242C66164753F /* VehicleMarker.swift */; };
 		B61561906240001E98F87FBD /* GraphQLTransportWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA5EC37C109487B4F37ECCC /* GraphQLTransportWS.swift */; };
 		BF7D17221F466D9EBDA8D7F3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A31A04DF937A0381BF574D1 /* RootView.swift */; };
@@ -58,11 +58,11 @@
 		20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleDetailView.swift; sourceTree = "<group>"; };
 		2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnturVehiclesClient.swift; sourceTree = "<group>"; };
 		2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vehicle.swift; sourceTree = "<group>"; };
+		2FB14187750304C8FB1BA5FF /* VehicleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMapView.swift; sourceTree = "<group>"; };
 		3520848B9608472F33F0CEBD /* LineColorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineColorStore.swift; sourceTree = "<group>"; };
 		362657BD7C0E63F2C4092311 /* NearbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyView.swift; sourceTree = "<group>"; };
 		4304222B0658C0B384AB28DA /* VehicleMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMode.swift; sourceTree = "<group>"; };
 		4734BE20DCE1092C33DC4D8C /* StopDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailView.swift; sourceTree = "<group>"; };
-		4A53B2AB8AC5C95CF505D4A7 /* BusMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusMapView.swift; sourceTree = "<group>"; };
 		4D73B7F498C591BDAF4C6C40 /* PersonalizationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationModels.swift; sourceTree = "<group>"; };
 		4DD141B28BB945A688D33BB4 /* UnderveisApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnderveisApp.swift; sourceTree = "<group>"; };
 		4DF1308D34BC170809B4BB70 /* CachedLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedLine.swift; sourceTree = "<group>"; };
@@ -219,8 +219,8 @@
 		F57FB2DA6AD32417BD121469 /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				4A53B2AB8AC5C95CF505D4A7 /* BusMapView.swift */,
 				5631C98D491D0185CE0AB72D /* StopMarker.swift */,
+				2FB14187750304C8FB1BA5FF /* VehicleMapView.swift */,
 				D90F9209670242C66164753F /* VehicleMarker.swift */,
 			);
 			path = Map;
@@ -298,7 +298,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7CDD1FA7EA64F3E1DCD36B77 /* BoundingBox+Region.swift in Sources */,
-				A0699FC2AB722C3010C97999 /* BusMapView.swift in Sources */,
 				53C321D5BE3E83C2BEE320A2 /* CachedLine.swift in Sources */,
 				93539A0B443C5C300A95910F /* Color+Hex.swift in Sources */,
 				ECDC9DA9EDF8182BCC2F2183 /* Color+Mode.swift in Sources */,
@@ -331,6 +330,7 @@
 				4C12218E106B562C786750E8 /* UnderveisApp.swift in Sources */,
 				2470028586D75285B2CC5B20 /* Vehicle.swift in Sources */,
 				7B759F29FA6BCE62789C614D /* VehicleDetailView.swift in Sources */,
+				9DBC2DE77EA668727E3AA8A1 /* VehicleMapView.swift in Sources */,
 				A8D49EAD32DEB1C2647DA9AD /* VehicleMarker.swift in Sources */,
 				9191D302A2F49C5524449FCC /* VehicleMode.swift in Sources */,
 				4FECE28314B82E0786B470E3 /* VehiclesModel.swift in Sources */,

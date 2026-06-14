@@ -13,13 +13,15 @@ struct VehicleMarker: View {
 
     var body: some View {
         ZStack {
+            // A directional "sweep" cone fanning out from the disc toward the heading. Drawn under
+            // the disc; the bearing is already eased frame-by-frame in `VehiclesModel`, so it turns
+            // smoothly. Decorative — never intercepts taps.
             if let bearing = vehicle.bearing {
-                Image(systemName: "location.north.fill")
-                    .font(.system(size: 9, weight: .regular))
-                    .foregroundStyle(colors.tint.opacity(isSelected ? 0.72 : 0.58))
-                    .shadow(color: .black.opacity(0.28), radius: 1, y: 0.5)
-                    .offset(y: -(size / 2 + 6))
-                    .rotationEffect(.degrees(bearing), anchor: .center)
+                HeadingCone()
+                    .fill(coneGradient)
+                    .frame(width: size * 2.3, height: size * 2.3)
+                    .rotationEffect(.degrees(bearing))
+                    .allowsHitTesting(false)
             }
 
             ZStack {
@@ -60,5 +62,37 @@ struct VehicleMarker: View {
     private var ringWidth: CGFloat {
         if isSelected { return 2 }
         return isWatched ? 2 : 1.25
+    }
+
+    /// Line tint near the disc fading to clear at the cone's outer edge.
+    private var coneGradient: LinearGradient {
+        LinearGradient(
+            colors: [colors.tint.opacity(isSelected ? 0.55 : 0.4), .clear],
+            startPoint: .center,
+            endPoint: .top
+        )
+    }
+}
+
+/// A circular sector ("cone") fanning upward from the centre, used to show a vehicle's heading.
+/// Drawn pointing north (up); callers rotate it by the bearing.
+struct HeadingCone: Shape {
+    /// Total angular width of the cone.
+    var spread: Angle = .degrees(46)
+
+    func path(in rect: CGRect) -> Path {
+        let center = CGPoint(x: rect.midX, y: rect.midY)
+        let radius = min(rect.width, rect.height) / 2
+        var path = Path()
+        path.move(to: center)
+        path.addArc(
+            center: center,
+            radius: radius,
+            startAngle: .degrees(-90) - spread / 2,
+            endAngle: .degrees(-90) + spread / 2,
+            clockwise: false
+        )
+        path.closeSubpath()
+        return path
     }
 }

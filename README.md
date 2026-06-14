@@ -56,7 +56,7 @@ immutable `Sendable` value types that cross it.
 | `VehiclesModel`        | `@MainActor @Observable` | Holds the live vehicle + stop sets, debounces the viewport, applies the mode filter, evicts stale vehicles.   |
 | `DeparturesModel`      | `@MainActor @Observable` | Polls the selected stop's departures and runs a 1 Hz ticker so countdowns stay live between fetches.          |
 | `LocationProvider`     | `@MainActor @Observable` | Core Location wrapper for the initial camera.                                                                 |
-| `BusMapView` / UI      | SwiftUI                  | `Map` with a marker per vehicle and stop; follow mode, status pill, filter popover, and detail inspector.     |
+| `VehicleMapView` / UI  | SwiftUI                  | `Map` with a marker per vehicle and stop; wide-zoom clustering, follow mode, status pill, filter popover, and detail inspector. |
 
 No API key is required; all requests identify themselves with the `ET-Client-Name` header.
 
