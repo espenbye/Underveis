@@ -31,6 +31,7 @@
 		6FAFF3E7D8BA0155B5D8BFA6 /* EnturVehiclesClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */; };
 		7B759F29FA6BCE62789C614D /* VehicleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */; };
 		7CDD1FA7EA64F3E1DCD36B77 /* BoundingBox+Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E911399AD81704E6B21B9F1 /* BoundingBox+Region.swift */; };
+		82801BDB5F7B1DE87F318D6D /* Occupancy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157159F24BFE60279F11839D /* Occupancy.swift */; };
 		863576A9F19780CB3B34D29B /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */; };
 		9080966C4C47C87BF393C29F /* JourneyPlannerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B988EA3D67B4383AE2C61CA /* JourneyPlannerClient.swift */; };
 		918247546194A8BBE24DA8E9 /* Stop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869BC7FBAF85D158069F2C1F /* Stop.swift */; };
@@ -49,6 +50,7 @@
 
 /* Begin PBXFileReference section */
 		140F8527BB9C0D8F9FCF130C /* Departure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Departure.swift; sourceTree = "<group>"; };
+		157159F24BFE60279F11839D /* Occupancy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Occupancy.swift; sourceTree = "<group>"; };
 		1A31A04DF937A0381BF574D1 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		1BAA1463019458215C62A602 /* JourneyDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetail.swift; sourceTree = "<group>"; };
 		1BC4D2AF42F51A5C5D9C3F34 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -181,6 +183,7 @@
 				7ACD0180C5A4D5FB89D674ED /* Coordinate.swift */,
 				140F8527BB9C0D8F9FCF130C /* Departure.swift */,
 				1BAA1463019458215C62A602 /* JourneyDetail.swift */,
+				157159F24BFE60279F11839D /* Occupancy.swift */,
 				869BC7FBAF85D158069F2C1F /* Stop.swift */,
 				2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */,
 				4304222B0658C0B384AB28DA /* VehicleMode.swift */,
@@ -313,6 +316,7 @@
 				6AE7F481935CBB16AE51015B /* ModeFilterView.swift in Sources */,
 				E174F2A714BF085877260750 /* NearbyModel.swift in Sources */,
 				9ACDE64385B6F5D947771119 /* NearbyView.swift in Sources */,
+				82801BDB5F7B1DE87F318D6D /* Occupancy.swift in Sources */,
 				04242C4ECF1F4F28B94FB1D4 /* PersonalizationModels.swift in Sources */,
 				627BD311D230CB1E5270EEEE /* PersonalizationStore.swift in Sources */,
 				EC8BACF3B12AA2687044CF97 /* Polyline.swift in Sources */,

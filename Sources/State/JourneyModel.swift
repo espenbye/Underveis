@@ -79,6 +79,17 @@ final class JourneyModel {
         return detail?.calls[index].id
     }
 
+    /// The next call the vehicle is heading to — its whole record (name + times), for the live status
+    /// card. Nil once every call is behind us (at/after the terminus) or before the journey loads.
+    func nextCall(for vehicle: Vehicle?) -> JourneyCall? {
+        guard let calls = detail?.calls, let index = nextIndex(for: vehicle, now: Date()),
+            calls.indices.contains(index)
+        else { return nil }
+        // Suppress the terminus when it's already in the past (nextIndex clamps to the last call).
+        if index == calls.count - 1, let time = calls[index].effectiveTime, time < Date() { return nil }
+        return calls[index]
+    }
+
     /// Per-call status keyed by call id, so a row can style itself without knowing its position.
     func statuses(for vehicle: Vehicle?) -> [String: CallStatus] {
         guard let calls = detail?.calls, !calls.isEmpty else { return [:] }

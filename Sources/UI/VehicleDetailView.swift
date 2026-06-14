@@ -26,6 +26,7 @@ struct VehicleDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 header
+                liveStatusCard
                 Divider()
                 rideAlongSection
                 Divider()
@@ -96,6 +97,83 @@ struct VehicleDetailView: View {
                 .buttonStyle(.plain)
                 .accessibilityLabel(isWatched ? "Slutt å følge linjen" : "Følg linjen")
             }
+        }
+    }
+
+    /// An at-a-glance "live status" strip: deviation from timetable, the next stop with a live ETA,
+    /// onboard crowding, and a traffic-congestion flag — whichever the feed currently provides. Hidden
+    /// entirely when none are known. Reading `journey.tickID` keeps the next-stop ETA counting down
+    /// between polls.
+    @ViewBuilder
+    private var liveStatusCard: some View {
+        let _ = journey.tickID
+        let nextCall = vehicle.serviceJourneyId != nil ? journey.nextCall(for: vehicle) : nil
+        let inCongestion = vehicle.inCongestion == true
+        let showDelay = vehicle.delay != nil
+        let showNext = nextCall != nil
+        let showOccupancy = vehicle.occupancy != nil
+        if showDelay || showNext || showOccupancy || inCongestion {
+            HStack(spacing: 0) {
+                if let delay = vehicle.delay {
+                    StatTile(icon: "clock", value: delayTileValue(delay), caption: "Avvik", tint: delayTint(delay))
+                }
+                if let nextCall {
+                    if showDelay { tileDivider }
+                    StatTile(
+                        icon: "signpost.right.fill",
+                        value: etaText(for: nextCall),
+                        caption: nextCall.quayName,
+                        tint: .primary
+                    )
+                }
+                if let occupancy = vehicle.occupancy {
+                    if showDelay || showNext { tileDivider }
+                    StatTile(icon: occupancy.symbolName, value: occupancy.title, caption: "Ombord", tint: occupancyTint(occupancy))
+                }
+                if inCongestion {
+                    if showDelay || showNext || showOccupancy { tileDivider }
+                    StatTile(icon: "exclamationmark.triangle.fill", value: "I kø", caption: "Trafikk", tint: .orange)
+                }
+            }
+            .padding(.vertical, 12)
+            .frame(maxWidth: .infinity)
+            .background(.quaternary.opacity(0.5), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+    }
+
+    private var tileDivider: some View {
+        Divider().frame(height: 40)
+    }
+
+    /// "I rute" / "+N min" / "−N min" — a compact deviation label for the status tile.
+    private func delayTileValue(_ delay: Double) -> String {
+        let minutes = Int((delay / 60).rounded())
+        if minutes == 0 { return "I rute" }
+        return minutes > 0 ? "+\(minutes) min" : "−\(-minutes) min"
+    }
+
+    private func delayTint(_ delay: Double) -> Color {
+        let minutes = Int((delay / 60).rounded())
+        if minutes == 0 { return .green }
+        return minutes > 0 ? .orange : .blue
+    }
+
+    /// Live ETA to a call: "Nå" / "N min" / a clock time for stops more than an hour out.
+    private func etaText(for call: JourneyCall) -> String {
+        guard let time = call.effectiveArrival ?? call.effectiveDeparture else { return "—" }
+        let remaining = time.timeIntervalSince(Date())
+        if remaining < 60 { return "Nå" }
+        let minutes = Int(remaining / 60)
+        if minutes < 60 { return "\(minutes) min" }
+        return "kl. " + time.formatted(date: .omitted, time: .shortened)
+    }
+
+    private func occupancyTint(_ occupancy: Occupancy) -> Color {
+        switch occupancy.severity {
+        case 0: .green
+        case 1: .yellow
+        case 2: .orange
+        default: .red
         }
     }
 
@@ -252,6 +330,33 @@ struct VehicleDetailView: View {
                 }
             }
         }
+    }
+}
+
+/// One column of the live status card: a tinted glyph over a headline value and a muted caption.
+private struct StatTile: View {
+    let icon: String
+    let value: String
+    let caption: String
+    let tint: Color
+
+    var body: some View {
+        VStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundStyle(tint)
+            Text(value)
+                .font(.callout.weight(.semibold))
+                .foregroundStyle(tint)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+            Text(caption)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.horizontal, 6)
     }
 }
 

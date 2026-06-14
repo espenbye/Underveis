@@ -14,6 +14,10 @@ struct Vehicle: Identifiable, Sendable, Equatable {
     var bearing: Double?
     var speed: Double?
     var delay: Double?
+    /// Live crowding level, when the operator reports it (`nil` for feeds that send `noData`).
+    var occupancy: Occupancy?
+    /// Whether the vehicle is reported stuck in traffic congestion (sparsely reported — often `nil`).
+    var inCongestion: Bool?
     var mode: VehicleMode?
     /// The scheduled trip this vehicle is running (e.g. `RUT:ServiceJourney:…`). Joins to a
     /// Journey Planner `Departure.serviceJourneyId`, letting a departure row locate its live vehicle.

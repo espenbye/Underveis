@@ -13,6 +13,8 @@ enum VehiclesQuery {
           bearing
           speed
           delay
+          occupancyStatus
+          inCongestion
           lastUpdatedEpochSecond
           expirationEpochSecond
           line { lineRef lineName publicCode }
@@ -80,6 +82,8 @@ struct VehicleUpdateDTO: Decodable, Sendable {
     let bearing: Double?
     let speed: Double?
     let delay: Double?
+    let occupancyStatus: String?
+    let inCongestion: Bool?
     let lastUpdatedEpochSecond: Double?
     let expirationEpochSecond: Double?
     let line: LineDTO?
@@ -117,6 +121,8 @@ struct VehicleUpdateDTO: Decodable, Sendable {
             bearing: bearing,
             speed: speed,
             delay: delay,
+            occupancy: occupancyStatus.flatMap(Occupancy.init(rawValue:)),
+            inCongestion: inCongestion,
             mode: mode.flatMap(VehicleMode.init(rawValue:)),
             serviceJourneyId: serviceJourney?.id,
             lineRef: line?.lineRef,
