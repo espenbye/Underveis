@@ -1,0 +1,551 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0171217B408508039B676AA1 /* Coordinate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ACD0180C5A4D5FB89D674ED /* Coordinate.swift */; };
+		04242C4ECF1F4F28B94FB1D4 /* PersonalizationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D73B7F498C591BDAF4C6C40 /* PersonalizationModels.swift */; };
+		05ADA8016D8A86ABE2DF6274 /* JourneyDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BAA1463019458215C62A602 /* JourneyDetail.swift */; };
+		1AD48886D78A8FA8029E3F93 /* StopMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5631C98D491D0185CE0AB72D /* StopMarker.swift */; };
+		2072B0122445FBAE6D9F703F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCC4D54969259FE234BD07F4 /* Assets.xcassets */; };
+		227FD61AD96602DE1B88CEC0 /* SavedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46E17D065FEA0B9A065BE4 /* SavedView.swift */; };
+		2470028586D75285B2CC5B20 /* Vehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */; };
+		3C0EE84B4B1E4FE63849547C /* RideAlongModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7878F97A231438F93E79A8 /* RideAlongModel.swift */; };
+		42B155F9EFA1BD269FB47D36 /* DepartureFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76C9A8BD0EE8CC56BE6C1D8 /* DepartureFormatting.swift */; };
+		4C12218E106B562C786750E8 /* UnderveisApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD141B28BB945A688D33BB4 /* UnderveisApp.swift */; };
+		4C5C705A1C3F4C1D88CB1777 /* LineColorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3520848B9608472F33F0CEBD /* LineColorStore.swift */; };
+		4C8D1FC4B3D6AE9B4A0F851B /* DeparturesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6DDFDB8DFF5877F180638D50 /* DeparturesModel.swift */; };
+		4FECE28314B82E0786B470E3 /* VehiclesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8381734EED10B79667C135A1 /* VehiclesModel.swift */; };
+		53C321D5BE3E83C2BEE320A2 /* CachedLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF1308D34BC170809B4BB70 /* CachedLine.swift */; };
+		5BAA202E3B57A3E2EBB84D1A /* Departure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140F8527BB9C0D8F9FCF130C /* Departure.swift */; };
+		627BD311D230CB1E5270EEEE /* PersonalizationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84CA4D7C457C8F3C4C16B60 /* PersonalizationStore.swift */; };
+		66B3E8FEC3DBC1AC75DD4A15 /* VehiclesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91FEBCFA4CA4C93AE7C4F43 /* VehiclesQuery.swift */; };
+		6AE7F481935CBB16AE51015B /* ModeFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8860AC6AE20374633D06DA5 /* ModeFilterView.swift */; };
+		6E0B7C961D28FFFC440FB49A /* JourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B206E00AF017F35FFF0A4D /* JourneyModel.swift */; };
+		6EBB989437CC892BE180E870 /* StopDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4734BE20DCE1092C33DC4D8C /* StopDetailView.swift */; };
+		6FAFF3E7D8BA0155B5D8BFA6 /* EnturVehiclesClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */; };
+		7B759F29FA6BCE62789C614D /* VehicleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */; };
+		7CDD1FA7EA64F3E1DCD36B77 /* BoundingBox+Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E911399AD81704E6B21B9F1 /* BoundingBox+Region.swift */; };
+		863576A9F19780CB3B34D29B /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */; };
+		9080966C4C47C87BF393C29F /* JourneyPlannerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B988EA3D67B4383AE2C61CA /* JourneyPlannerClient.swift */; };
+		918247546194A8BBE24DA8E9 /* Stop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869BC7FBAF85D158069F2C1F /* Stop.swift */; };
+		9191D302A2F49C5524449FCC /* VehicleMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304222B0658C0B384AB28DA /* VehicleMode.swift */; };
+		93539A0B443C5C300A95910F /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B8A75CFE1EAF475547D09B /* Color+Hex.swift */; };
+		9ACDE64385B6F5D947771119 /* NearbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362657BD7C0E63F2C4092311 /* NearbyView.swift */; };
+		A0699FC2AB722C3010C97999 /* BusMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A53B2AB8AC5C95CF505D4A7 /* BusMapView.swift */; };
+		A8D49EAD32DEB1C2647DA9AD /* VehicleMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90F9209670242C66164753F /* VehicleMarker.swift */; };
+		B61561906240001E98F87FBD /* GraphQLTransportWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA5EC37C109487B4F37ECCC /* GraphQLTransportWS.swift */; };
+		BF7D17221F466D9EBDA8D7F3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A31A04DF937A0381BF574D1 /* RootView.swift */; };
+		E174F2A714BF085877260750 /* NearbyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B616C574132CC94EB9ED4B68 /* NearbyModel.swift */; };
+		EC8BACF3B12AA2687044CF97 /* Polyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD91B5C41E18921F1377C2 /* Polyline.swift */; };
+		ECDC9DA9EDF8182BCC2F2183 /* Color+Mode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF49E1EF441D9E6A2D1EEF9 /* Color+Mode.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		140F8527BB9C0D8F9FCF130C /* Departure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Departure.swift; sourceTree = "<group>"; };
+		1A31A04DF937A0381BF574D1 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		1BAA1463019458215C62A602 /* JourneyDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyDetail.swift; sourceTree = "<group>"; };
+		20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleDetailView.swift; sourceTree = "<group>"; };
+		2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnturVehiclesClient.swift; sourceTree = "<group>"; };
+		2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vehicle.swift; sourceTree = "<group>"; };
+		3520848B9608472F33F0CEBD /* LineColorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineColorStore.swift; sourceTree = "<group>"; };
+		362657BD7C0E63F2C4092311 /* NearbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyView.swift; sourceTree = "<group>"; };
+		4304222B0658C0B384AB28DA /* VehicleMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMode.swift; sourceTree = "<group>"; };
+		4734BE20DCE1092C33DC4D8C /* StopDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailView.swift; sourceTree = "<group>"; };
+		4A53B2AB8AC5C95CF505D4A7 /* BusMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusMapView.swift; sourceTree = "<group>"; };
+		4D73B7F498C591BDAF4C6C40 /* PersonalizationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationModels.swift; sourceTree = "<group>"; };
+		4DD141B28BB945A688D33BB4 /* UnderveisApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnderveisApp.swift; sourceTree = "<group>"; };
+		4DF1308D34BC170809B4BB70 /* CachedLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedLine.swift; sourceTree = "<group>"; };
+		5631C98D491D0185CE0AB72D /* StopMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopMarker.swift; sourceTree = "<group>"; };
+		60B8A75CFE1EAF475547D09B /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		6DDFDB8DFF5877F180638D50 /* DeparturesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeparturesModel.swift; sourceTree = "<group>"; };
+		6E7878F97A231438F93E79A8 /* RideAlongModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideAlongModel.swift; sourceTree = "<group>"; };
+		6EF49E1EF441D9E6A2D1EEF9 /* Color+Mode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Mode.swift"; sourceTree = "<group>"; };
+		6F46E17D065FEA0B9A065BE4 /* SavedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedView.swift; sourceTree = "<group>"; };
+		72B206E00AF017F35FFF0A4D /* JourneyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyModel.swift; sourceTree = "<group>"; };
+		7ACD0180C5A4D5FB89D674ED /* Coordinate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinate.swift; sourceTree = "<group>"; };
+		8381734EED10B79667C135A1 /* VehiclesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehiclesModel.swift; sourceTree = "<group>"; };
+		869BC7FBAF85D158069F2C1F /* Stop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stop.swift; sourceTree = "<group>"; };
+		8E911399AD81704E6B21B9F1 /* BoundingBox+Region.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoundingBox+Region.swift"; sourceTree = "<group>"; };
+		9B988EA3D67B4383AE2C61CA /* JourneyPlannerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPlannerClient.swift; sourceTree = "<group>"; };
+		A84CA4D7C457C8F3C4C16B60 /* PersonalizationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationStore.swift; sourceTree = "<group>"; };
+		B570F1B7175E6952D53A8C9A /* Underveis.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Underveis.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B616C574132CC94EB9ED4B68 /* NearbyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyModel.swift; sourceTree = "<group>"; };
+		B91FEBCFA4CA4C93AE7C4F43 /* VehiclesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehiclesQuery.swift; sourceTree = "<group>"; };
+		C8860AC6AE20374633D06DA5 /* ModeFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeFilterView.swift; sourceTree = "<group>"; };
+		C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
+		D90F9209670242C66164753F /* VehicleMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMarker.swift; sourceTree = "<group>"; };
+		DCA5EC37C109487B4F37ECCC /* GraphQLTransportWS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphQLTransportWS.swift; sourceTree = "<group>"; };
+		E3FD91B5C41E18921F1377C2 /* Polyline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polyline.swift; sourceTree = "<group>"; };
+		E76C9A8BD0EE8CC56BE6C1D8 /* DepartureFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureFormatting.swift; sourceTree = "<group>"; };
+		FCC4D54969259FE234BD07F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		31CD7FA57B82ADF4194F9DB4 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				8E911399AD81704E6B21B9F1 /* BoundingBox+Region.swift */,
+				60B8A75CFE1EAF475547D09B /* Color+Hex.swift */,
+				6EF49E1EF441D9E6A2D1EEF9 /* Color+Mode.swift */,
+				E3FD91B5C41E18921F1377C2 /* Polyline.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+		3C82DBBF4AAADE17BDD7B6BD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B570F1B7175E6952D53A8C9A /* Underveis.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		53F9EBD1FED3957E30AB28A1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				FCC4D54969259FE234BD07F4 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		57A5F4C80D5491C2AA105B39 /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				4DF1308D34BC170809B4BB70 /* CachedLine.swift */,
+				3520848B9608472F33F0CEBD /* LineColorStore.swift */,
+				4D73B7F498C591BDAF4C6C40 /* PersonalizationModels.swift */,
+				A84CA4D7C457C8F3C4C16B60 /* PersonalizationStore.swift */,
+			);
+			path = Persistence;
+			sourceTree = "<group>";
+		};
+		5EF6F8B959BACB7D387C301F = {
+			isa = PBXGroup;
+			children = (
+				53F9EBD1FED3957E30AB28A1 /* Resources */,
+				730294D3768738CF876687E7 /* Sources */,
+				3C82DBBF4AAADE17BDD7B6BD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		70D0F7FAE66D80268343A2D9 /* UI */ = {
+			isa = PBXGroup;
+			children = (
+				E76C9A8BD0EE8CC56BE6C1D8 /* DepartureFormatting.swift */,
+				C8860AC6AE20374633D06DA5 /* ModeFilterView.swift */,
+				362657BD7C0E63F2C4092311 /* NearbyView.swift */,
+				1A31A04DF937A0381BF574D1 /* RootView.swift */,
+				6F46E17D065FEA0B9A065BE4 /* SavedView.swift */,
+				4734BE20DCE1092C33DC4D8C /* StopDetailView.swift */,
+				20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */,
+			);
+			path = UI;
+			sourceTree = "<group>";
+		};
+		730294D3768738CF876687E7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				776ACA92E0B371F9D46E4E2E /* App */,
+				F57FB2DA6AD32417BD121469 /* Map */,
+				7AA3D025746F9F77AE2E8D9B /* Models */,
+				E9973224E7138D21F3B75467 /* Networking */,
+				57A5F4C80D5491C2AA105B39 /* Persistence */,
+				83C9581F7A88D7AFDB0F1A9F /* State */,
+				31CD7FA57B82ADF4194F9DB4 /* Support */,
+				70D0F7FAE66D80268343A2D9 /* UI */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		776ACA92E0B371F9D46E4E2E /* App */ = {
+			isa = PBXGroup;
+			children = (
+				4DD141B28BB945A688D33BB4 /* UnderveisApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		7AA3D025746F9F77AE2E8D9B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7ACD0180C5A4D5FB89D674ED /* Coordinate.swift */,
+				140F8527BB9C0D8F9FCF130C /* Departure.swift */,
+				1BAA1463019458215C62A602 /* JourneyDetail.swift */,
+				869BC7FBAF85D158069F2C1F /* Stop.swift */,
+				2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */,
+				4304222B0658C0B384AB28DA /* VehicleMode.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		83C9581F7A88D7AFDB0F1A9F /* State */ = {
+			isa = PBXGroup;
+			children = (
+				6DDFDB8DFF5877F180638D50 /* DeparturesModel.swift */,
+				72B206E00AF017F35FFF0A4D /* JourneyModel.swift */,
+				C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */,
+				B616C574132CC94EB9ED4B68 /* NearbyModel.swift */,
+				6E7878F97A231438F93E79A8 /* RideAlongModel.swift */,
+				8381734EED10B79667C135A1 /* VehiclesModel.swift */,
+			);
+			path = State;
+			sourceTree = "<group>";
+		};
+		E9973224E7138D21F3B75467 /* Networking */ = {
+			isa = PBXGroup;
+			children = (
+				2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */,
+				DCA5EC37C109487B4F37ECCC /* GraphQLTransportWS.swift */,
+				9B988EA3D67B4383AE2C61CA /* JourneyPlannerClient.swift */,
+				B91FEBCFA4CA4C93AE7C4F43 /* VehiclesQuery.swift */,
+			);
+			path = Networking;
+			sourceTree = "<group>";
+		};
+		F57FB2DA6AD32417BD121469 /* Map */ = {
+			isa = PBXGroup;
+			children = (
+				4A53B2AB8AC5C95CF505D4A7 /* BusMapView.swift */,
+				5631C98D491D0185CE0AB72D /* StopMarker.swift */,
+				D90F9209670242C66164753F /* VehicleMarker.swift */,
+			);
+			path = Map;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		97BC13EC340B9E1F4C14072A /* Underveis */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E33C34210520EC010DA5CCE1 /* Build configuration list for PBXNativeTarget "Underveis" */;
+			buildPhases = (
+				B07BFC9B16174E1E507E40E5 /* Sources */,
+				42B44B41DCC06E16F1BD5604 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Underveis;
+			packageProductDependencies = (
+			);
+			productName = Underveis;
+			productReference = B570F1B7175E6952D53A8C9A /* Underveis.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E0ACC699F88D8D772B48EC1D /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					97BC13EC340B9E1F4C14072A = {
+						DevelopmentTeam = 9QD8BJRLPC;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 4C6E54766013A8D1736AC114 /* Build configuration list for PBXProject "Underveis" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 5EF6F8B959BACB7D387C301F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3C82DBBF4AAADE17BDD7B6BD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				97BC13EC340B9E1F4C14072A /* Underveis */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		42B44B41DCC06E16F1BD5604 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2072B0122445FBAE6D9F703F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B07BFC9B16174E1E507E40E5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7CDD1FA7EA64F3E1DCD36B77 /* BoundingBox+Region.swift in Sources */,
+				A0699FC2AB722C3010C97999 /* BusMapView.swift in Sources */,
+				53C321D5BE3E83C2BEE320A2 /* CachedLine.swift in Sources */,
+				93539A0B443C5C300A95910F /* Color+Hex.swift in Sources */,
+				ECDC9DA9EDF8182BCC2F2183 /* Color+Mode.swift in Sources */,
+				0171217B408508039B676AA1 /* Coordinate.swift in Sources */,
+				5BAA202E3B57A3E2EBB84D1A /* Departure.swift in Sources */,
+				42B155F9EFA1BD269FB47D36 /* DepartureFormatting.swift in Sources */,
+				4C8D1FC4B3D6AE9B4A0F851B /* DeparturesModel.swift in Sources */,
+				6FAFF3E7D8BA0155B5D8BFA6 /* EnturVehiclesClient.swift in Sources */,
+				B61561906240001E98F87FBD /* GraphQLTransportWS.swift in Sources */,
+				05ADA8016D8A86ABE2DF6274 /* JourneyDetail.swift in Sources */,
+				6E0B7C961D28FFFC440FB49A /* JourneyModel.swift in Sources */,
+				9080966C4C47C87BF393C29F /* JourneyPlannerClient.swift in Sources */,
+				4C5C705A1C3F4C1D88CB1777 /* LineColorStore.swift in Sources */,
+				863576A9F19780CB3B34D29B /* LocationProvider.swift in Sources */,
+				6AE7F481935CBB16AE51015B /* ModeFilterView.swift in Sources */,
+				E174F2A714BF085877260750 /* NearbyModel.swift in Sources */,
+				9ACDE64385B6F5D947771119 /* NearbyView.swift in Sources */,
+				04242C4ECF1F4F28B94FB1D4 /* PersonalizationModels.swift in Sources */,
+				627BD311D230CB1E5270EEEE /* PersonalizationStore.swift in Sources */,
+				EC8BACF3B12AA2687044CF97 /* Polyline.swift in Sources */,
+				3C0EE84B4B1E4FE63849547C /* RideAlongModel.swift in Sources */,
+				BF7D17221F466D9EBDA8D7F3 /* RootView.swift in Sources */,
+				227FD61AD96602DE1B88CEC0 /* SavedView.swift in Sources */,
+				918247546194A8BBE24DA8E9 /* Stop.swift in Sources */,
+				6EBB989437CC892BE180E870 /* StopDetailView.swift in Sources */,
+				1AD48886D78A8FA8029E3F93 /* StopMarker.swift in Sources */,
+				4C12218E106B562C786750E8 /* UnderveisApp.swift in Sources */,
+				2470028586D75285B2CC5B20 /* Vehicle.swift in Sources */,
+				7B759F29FA6BCE62789C614D /* VehicleDetailView.swift in Sources */,
+				A8D49EAD32DEB1C2647DA9AD /* VehicleMarker.swift in Sources */,
+				9191D302A2F49C5524449FCC /* VehicleMode.swift in Sources */,
+				4FECE28314B82E0786B470E3 /* VehiclesModel.swift in Sources */,
+				66B3E8FEC3DBC1AC75DD4A15 /* VehiclesQuery.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3AD5458355B956111B180CDF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = Underveis;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = no.espenbye.underveis;
+				PRODUCT_NAME = Underveis;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		4A991D3F1FC1202703415721 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_KEY_CFBundleDisplayName = Underveis;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = no.espenbye.underveis;
+				PRODUCT_NAME = Underveis;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		603F9B586DC6A7C45DDE6012 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = Underveis.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 9QD8BJRLPC;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Underveis viser kollektivtrafikk i nærheten av deg på kartet.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations~ipad" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations~iphone" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		91801EA141110305EE2BFF8F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = Underveis.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 9QD8BJRLPC;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Underveis viser kollektivtrafikk i nærheten av deg på kartet.";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations~ipad" = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				"INFOPLIST_KEY_UISupportedInterfaceOrientations~iphone" = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = auto;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4C6E54766013A8D1736AC114 /* Build configuration list for PBXProject "Underveis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				603F9B586DC6A7C45DDE6012 /* Debug */,
+				91801EA141110305EE2BFF8F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E33C34210520EC010DA5CCE1 /* Build configuration list for PBXNativeTarget "Underveis" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3AD5458355B956111B180CDF /* Debug */,
+				4A991D3F1FC1202703415721 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E0ACC699F88D8D772B48EC1D /* Project object */;
+}
