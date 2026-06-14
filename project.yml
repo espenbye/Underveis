@@ -21,13 +21,21 @@ settings:
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
     GENERATE_INFOPLIST_FILE: YES
+    # macOS 26's actool caps the generated AppIcon.icns at 128pt@2x (256px) and keeps the full icon
+    # only in Assets.car. App Store validation (ITMS-90236) wants a 512pt@2x (1024px) image in the
+    # ICNS, so force actool to emit every standalone-icon size.
+    ASSETCATALOG_COMPILER_STANDALONE_ICON_BEHAVIOR: all
     # The app only uses standard HTTPS/WSS (TLS to Entur), which is exempt encryption — so it doesn't
     # use non-exempt encryption. Baking this in suppresses App Store Connect's per-build prompt.
     INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
     INFOPLIST_KEY_UILaunchScreen_Generation: YES
     # iPad must support all four orientations (it isn't full-screen-only); iPhone keeps the usual three.
-    "INFOPLIST_KEY_UISupportedInterfaceOrientations~ipad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
-    "INFOPLIST_KEY_UISupportedInterfaceOrientations~iphone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+    # NB: the build-setting names use the `_iPad`/`_iPhone` suffix — the `~ipad`/`~iphone` tilde form
+    # is not a valid build-setting name and Xcode silently drops it, leaving the plist with no
+    # orientations (App Store reject ITMS-90474). These emit the `UISupportedInterfaceOrientations~ipad`
+    # / `~iphone` plist keys.
+    INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+    INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
     INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: "Underveis viser kollektivtrafikk i nærheten av deg på kartet."
     # Entitlements only apply when building for macOS (App Sandbox + outbound network + location).
     "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Underveis.entitlements

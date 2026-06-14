@@ -27,7 +27,10 @@ make build-ios   # build for the iOS Simulator
   Adding/removing source files also requires a regen + commit.
 - **Signing:** Automatic, with the **Espen Bye** team (`DEVELOPMENT_TEAM = 9QD8BJRLPC`) set in
   `project.yml` — builds sign without manual Xcode setup.
-- App icon (`Resources/Assets.xcassets/AppIcon.appiconset`) is currently iOS-only (1024 single-size).
+- App icon (`Resources/Assets.xcassets/AppIcon.appiconset`) has the iOS 1024 plus the full macOS set
+  (16–1024). macOS 26's actool caps the standalone `AppIcon.icns` at 256px, so
+  `ASSETCATALOG_COMPILER_STANDALONE_ICON_BEHAVIOR = all` (in `project.yml`) forces the complete ICNS
+  the App Store requires (ITMS-90236).
 
 ## Architecture
 
