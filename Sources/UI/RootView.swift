@@ -16,6 +16,7 @@ struct RootView: View {
     @State private var journey = JourneyModel()
     @State private var nearby = NearbyModel()
     @State private var reminders = ReminderStore()
+    @State private var liveActivity = LiveActivityController()
     @State private var cameraPosition: MapCameraPosition = .region(.underveisDefault)
     @State private var currentCamera: MapCamera?
     /// Latest visible region, used by the map to size its clustering grid. Seeded with the launch
@@ -70,6 +71,7 @@ struct RootView: View {
             location.requestAndStart()
             model.start()
             model.updateViewport(.underveisDefault)
+            liveActivity.refresh()
             await reminders.refresh()
         }
         .onChange(of: location.fixCount) {
@@ -331,6 +333,8 @@ struct RootView: View {
                 reminders: reminders,
                 isFavorite: selectedStop.map { model.personalization.isFavorite(stopID: $0.id) } ?? false,
                 onToggleFavorite: { if let stop = selectedStop { model.personalization.toggleFavorite(stop) } },
+                isLiveActivityActive: { liveActivity.isActive($0) },
+                onToggleLiveActivity: { liveActivity.toggle($0, stopName: departures.stopName) },
                 onSelectDeparture: selectDeparture
             )
         } else {

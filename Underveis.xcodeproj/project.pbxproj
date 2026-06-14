@@ -11,10 +11,15 @@
 		04242C4ECF1F4F28B94FB1D4 /* PersonalizationModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D73B7F498C591BDAF4C6C40 /* PersonalizationModels.swift */; };
 		05ADA8016D8A86ABE2DF6274 /* JourneyDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BAA1463019458215C62A602 /* JourneyDetail.swift */; };
 		1AD48886D78A8FA8029E3F93 /* StopMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5631C98D491D0185CE0AB72D /* StopMarker.swift */; };
+		1C5958FB6DE95BA3535B4F3A /* UnderveisWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3D0EAC64E1E97A39914A7A28 /* UnderveisWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		2072B0122445FBAE6D9F703F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FCC4D54969259FE234BD07F4 /* Assets.xcassets */; };
 		227FD61AD96602DE1B88CEC0 /* SavedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F46E17D065FEA0B9A065BE4 /* SavedView.swift */; };
 		2470028586D75285B2CC5B20 /* Vehicle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */; };
+		39A67548668B895E06BC665A /* DepartureFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76C9A8BD0EE8CC56BE6C1D8 /* DepartureFormatting.swift */; };
 		3C0EE84B4B1E4FE63849547C /* RideAlongModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E7878F97A231438F93E79A8 /* RideAlongModel.swift */; };
+		3F4E0E24FB0B35E195DF0F56 /* DeparturesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAB7F01F7D1F757F42CFD76 /* DeparturesProvider.swift */; };
+		420113E0682F69C615FA9E00 /* DepartureActivityWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31331BE3FB3E68BD9EF92AF7 /* DepartureActivityWidget.swift */; };
+		420C1044CAD3497E18559C14 /* SelectStopIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 46D74B6394C951035C331F37 /* SelectStopIntent.swift */; };
 		42B155F9EFA1BD269FB47D36 /* DepartureFormatting.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76C9A8BD0EE8CC56BE6C1D8 /* DepartureFormatting.swift */; };
 		4C12218E106B562C786750E8 /* UnderveisApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DD141B28BB945A688D33BB4 /* UnderveisApp.swift */; };
 		4C5C705A1C3F4C1D88CB1777 /* LineColorStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3520848B9608472F33F0CEBD /* LineColorStore.swift */; };
@@ -25,30 +30,66 @@
 		5BAA202E3B57A3E2EBB84D1A /* Departure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140F8527BB9C0D8F9FCF130C /* Departure.swift */; };
 		627BD311D230CB1E5270EEEE /* PersonalizationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84CA4D7C457C8F3C4C16B60 /* PersonalizationStore.swift */; };
 		66B3E8FEC3DBC1AC75DD4A15 /* VehiclesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91FEBCFA4CA4C93AE7C4F43 /* VehiclesQuery.swift */; };
+		69A03CF63547C9F5073ADEE0 /* StopSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0001D4D0E684DC2BA3CE8A53 /* StopSearch.swift */; };
 		6AE7F481935CBB16AE51015B /* ModeFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8860AC6AE20374633D06DA5 /* ModeFilterView.swift */; };
+		6BB7048E75A5B44D2D5E7532 /* NextDepartureWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = A054AB9DDD2BA733817AA1B9 /* NextDepartureWidget.swift */; };
 		6E0B7C961D28FFFC440FB49A /* JourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B206E00AF017F35FFF0A4D /* JourneyModel.swift */; };
 		6EBB989437CC892BE180E870 /* StopDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4734BE20DCE1092C33DC4D8C /* StopDetailView.swift */; };
 		6FAFF3E7D8BA0155B5D8BFA6 /* EnturVehiclesClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */; };
+		776B541EDF87FFC05D821658 /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B8A75CFE1EAF475547D09B /* Color+Hex.swift */; };
+		79746278979541A5A1959564 /* DepartureActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E65779BF361B89D19DE1894 /* DepartureActivityAttributes.swift */; };
 		7B759F29FA6BCE62789C614D /* VehicleDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */; };
 		7CDD1FA7EA64F3E1DCD36B77 /* BoundingBox+Region.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E911399AD81704E6B21B9F1 /* BoundingBox+Region.swift */; };
 		82801BDB5F7B1DE87F318D6D /* Occupancy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 157159F24BFE60279F11839D /* Occupancy.swift */; };
 		863576A9F19780CB3B34D29B /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */; };
 		9080966C4C47C87BF393C29F /* JourneyPlannerClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B988EA3D67B4383AE2C61CA /* JourneyPlannerClient.swift */; };
+		90BE4446E57977CD118B36AA /* LiveActivityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A6C0A9DAF7B4C9E450B092E /* LiveActivityController.swift */; };
 		918247546194A8BBE24DA8E9 /* Stop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 869BC7FBAF85D158069F2C1F /* Stop.swift */; };
 		9191D302A2F49C5524449FCC /* VehicleMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4304222B0658C0B384AB28DA /* VehicleMode.swift */; };
+		932F84EB8C4E04CE3AC8C767 /* DeparturesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FAB7F01F7D1F757F42CFD76 /* DeparturesProvider.swift */; };
 		93539A0B443C5C300A95910F /* Color+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60B8A75CFE1EAF475547D09B /* Color+Hex.swift */; };
 		9ACDE64385B6F5D947771119 /* NearbyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 362657BD7C0E63F2C4092311 /* NearbyView.swift */; };
 		9DBC2DE77EA668727E3AA8A1 /* VehicleMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FB14187750304C8FB1BA5FF /* VehicleMapView.swift */; };
+		9E4FE6C183F2E5DD159774FD /* NextDepartureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1933E17C6B26332ACB1147 /* NextDepartureProvider.swift */; };
 		A8D49EAD32DEB1C2647DA9AD /* VehicleMarker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90F9209670242C66164753F /* VehicleMarker.swift */; };
+		A9C6C2BE10E2F863BBF76CF8 /* DepartureActivityAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E65779BF361B89D19DE1894 /* DepartureActivityAttributes.swift */; };
+		B385169BE2230EFB77F1172C /* NextDepartureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B7E02F08F4E9687BFA9CE5E /* NextDepartureView.swift */; };
 		B61561906240001E98F87FBD /* GraphQLTransportWS.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCA5EC37C109487B4F37ECCC /* GraphQLTransportWS.swift */; };
 		BF7D17221F466D9EBDA8D7F3 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A31A04DF937A0381BF574D1 /* RootView.swift */; };
+		C631A917D2708BBB8625F17E /* UnderveisWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7704146BB7B17B7F365A6B8 /* UnderveisWidgetBundle.swift */; };
 		E174F2A714BF085877260750 /* NearbyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B616C574132CC94EB9ED4B68 /* NearbyModel.swift */; };
 		EC8BACF3B12AA2687044CF97 /* Polyline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3FD91B5C41E18921F1377C2 /* Polyline.swift */; };
 		ECDC9DA9EDF8182BCC2F2183 /* Color+Mode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EF49E1EF441D9E6A2D1EEF9 /* Color+Mode.swift */; };
 		F4E48090AF8B4E5723B1743B /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BC4D2AF42F51A5C5D9C3F34 /* SettingsView.swift */; };
+		FCFD0618FC66851E7DAC19BA /* Departure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140F8527BB9C0D8F9FCF130C /* Departure.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		018194EC467570130071C91D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E0ACC699F88D8D772B48EC1D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CBA50A1DE39CE16EF188F126;
+			remoteInfo = UnderveisWidgets;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		43F20B3BE200E6869EB566EB /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1C5958FB6DE95BA3535B4F3A /* UnderveisWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0001D4D0E684DC2BA3CE8A53 /* StopSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopSearch.swift; sourceTree = "<group>"; };
 		140F8527BB9C0D8F9FCF130C /* Departure.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Departure.swift; sourceTree = "<group>"; };
 		157159F24BFE60279F11839D /* Occupancy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Occupancy.swift; sourceTree = "<group>"; };
 		1A31A04DF937A0381BF574D1 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -57,18 +98,26 @@
 		1F5E94CDA04FF3390CFE6B41 /* ReminderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderStore.swift; sourceTree = "<group>"; };
 		20FB7F4F4C36BFA367540777 /* VehicleDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleDetailView.swift; sourceTree = "<group>"; };
 		2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnturVehiclesClient.swift; sourceTree = "<group>"; };
+		2B7E02F08F4E9687BFA9CE5E /* NextDepartureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextDepartureView.swift; sourceTree = "<group>"; };
 		2EE4FBB1665A178B3F8E3090 /* Vehicle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vehicle.swift; sourceTree = "<group>"; };
 		2FB14187750304C8FB1BA5FF /* VehicleMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMapView.swift; sourceTree = "<group>"; };
+		31331BE3FB3E68BD9EF92AF7 /* DepartureActivityWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureActivityWidget.swift; sourceTree = "<group>"; };
 		3520848B9608472F33F0CEBD /* LineColorStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineColorStore.swift; sourceTree = "<group>"; };
 		362657BD7C0E63F2C4092311 /* NearbyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyView.swift; sourceTree = "<group>"; };
+		3D0EAC64E1E97A39914A7A28 /* UnderveisWidgets.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = UnderveisWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3FAB7F01F7D1F757F42CFD76 /* DeparturesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeparturesProvider.swift; sourceTree = "<group>"; };
 		4304222B0658C0B384AB28DA /* VehicleMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMode.swift; sourceTree = "<group>"; };
+		46D74B6394C951035C331F37 /* SelectStopIntent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectStopIntent.swift; sourceTree = "<group>"; };
 		4734BE20DCE1092C33DC4D8C /* StopDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDetailView.swift; sourceTree = "<group>"; };
+		49C5117AA8FAECDF8A23B749 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4A6C0A9DAF7B4C9E450B092E /* LiveActivityController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveActivityController.swift; sourceTree = "<group>"; };
 		4D73B7F498C591BDAF4C6C40 /* PersonalizationModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationModels.swift; sourceTree = "<group>"; };
 		4DD141B28BB945A688D33BB4 /* UnderveisApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnderveisApp.swift; sourceTree = "<group>"; };
 		4DF1308D34BC170809B4BB70 /* CachedLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedLine.swift; sourceTree = "<group>"; };
 		5631C98D491D0185CE0AB72D /* StopMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopMarker.swift; sourceTree = "<group>"; };
 		60B8A75CFE1EAF475547D09B /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
 		6DDFDB8DFF5877F180638D50 /* DeparturesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeparturesModel.swift; sourceTree = "<group>"; };
+		6E65779BF361B89D19DE1894 /* DepartureActivityAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureActivityAttributes.swift; sourceTree = "<group>"; };
 		6E7878F97A231438F93E79A8 /* RideAlongModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideAlongModel.swift; sourceTree = "<group>"; };
 		6EF49E1EF441D9E6A2D1EEF9 /* Color+Mode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Mode.swift"; sourceTree = "<group>"; };
 		6F46E17D065FEA0B9A065BE4 /* SavedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedView.swift; sourceTree = "<group>"; };
@@ -78,20 +127,33 @@
 		869BC7FBAF85D158069F2C1F /* Stop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stop.swift; sourceTree = "<group>"; };
 		8E911399AD81704E6B21B9F1 /* BoundingBox+Region.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoundingBox+Region.swift"; sourceTree = "<group>"; };
 		9B988EA3D67B4383AE2C61CA /* JourneyPlannerClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JourneyPlannerClient.swift; sourceTree = "<group>"; };
+		A054AB9DDD2BA733817AA1B9 /* NextDepartureWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextDepartureWidget.swift; sourceTree = "<group>"; };
 		A84CA4D7C457C8F3C4C16B60 /* PersonalizationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersonalizationStore.swift; sourceTree = "<group>"; };
 		B570F1B7175E6952D53A8C9A /* Underveis.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Underveis.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B616C574132CC94EB9ED4B68 /* NearbyModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NearbyModel.swift; sourceTree = "<group>"; };
 		B91FEBCFA4CA4C93AE7C4F43 /* VehiclesQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehiclesQuery.swift; sourceTree = "<group>"; };
+		C233E9859BFCF4269E01BDDD /* UnderveisWidgets.macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UnderveisWidgets.macOS.entitlements; sourceTree = "<group>"; };
 		C8860AC6AE20374633D06DA5 /* ModeFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeFilterView.swift; sourceTree = "<group>"; };
 		C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
+		D7704146BB7B17B7F365A6B8 /* UnderveisWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnderveisWidgetBundle.swift; sourceTree = "<group>"; };
 		D90F9209670242C66164753F /* VehicleMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VehicleMarker.swift; sourceTree = "<group>"; };
 		DCA5EC37C109487B4F37ECCC /* GraphQLTransportWS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GraphQLTransportWS.swift; sourceTree = "<group>"; };
 		E3FD91B5C41E18921F1377C2 /* Polyline.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Polyline.swift; sourceTree = "<group>"; };
 		E76C9A8BD0EE8CC56BE6C1D8 /* DepartureFormatting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DepartureFormatting.swift; sourceTree = "<group>"; };
+		EB1933E17C6B26332ACB1147 /* NextDepartureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextDepartureProvider.swift; sourceTree = "<group>"; };
 		FCC4D54969259FE234BD07F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
+		154D3AC882A589FBA7719161 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				6E65779BF361B89D19DE1894 /* DepartureActivityAttributes.swift */,
+				3FAB7F01F7D1F757F42CFD76 /* DeparturesProvider.swift */,
+			);
+			path = Shared;
+			sourceTree = "<group>";
+		};
 		31CD7FA57B82ADF4194F9DB4 /* Support */ = {
 			isa = PBXGroup;
 			children = (
@@ -107,6 +169,7 @@
 			isa = PBXGroup;
 			children = (
 				B570F1B7175E6952D53A8C9A /* Underveis.app */,
+				3D0EAC64E1E97A39914A7A28 /* UnderveisWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -135,6 +198,7 @@
 			children = (
 				53F9EBD1FED3957E30AB28A1 /* Resources */,
 				730294D3768738CF876687E7 /* Sources */,
+				D34E8FF9B62F65902CBBAC3F /* Widgets */,
 				3C82DBBF4AAADE17BDD7B6BD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -162,6 +226,7 @@
 				7AA3D025746F9F77AE2E8D9B /* Models */,
 				E9973224E7138D21F3B75467 /* Networking */,
 				57A5F4C80D5491C2AA105B39 /* Persistence */,
+				154D3AC882A589FBA7719161 /* Shared */,
 				83C9581F7A88D7AFDB0F1A9F /* State */,
 				31CD7FA57B82ADF4194F9DB4 /* Support */,
 				70D0F7FAE66D80268343A2D9 /* UI */,
@@ -196,6 +261,7 @@
 			children = (
 				6DDFDB8DFF5877F180638D50 /* DeparturesModel.swift */,
 				72B206E00AF017F35FFF0A4D /* JourneyModel.swift */,
+				4A6C0A9DAF7B4C9E450B092E /* LiveActivityController.swift */,
 				C8FB7BD625A43C5F9E02D54D /* LocationProvider.swift */,
 				B616C574132CC94EB9ED4B68 /* NearbyModel.swift */,
 				1F5E94CDA04FF3390CFE6B41 /* ReminderStore.swift */,
@@ -203,6 +269,22 @@
 				8381734EED10B79667C135A1 /* VehiclesModel.swift */,
 			);
 			path = State;
+			sourceTree = "<group>";
+		};
+		D34E8FF9B62F65902CBBAC3F /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				31331BE3FB3E68BD9EF92AF7 /* DepartureActivityWidget.swift */,
+				49C5117AA8FAECDF8A23B749 /* Info.plist */,
+				EB1933E17C6B26332ACB1147 /* NextDepartureProvider.swift */,
+				2B7E02F08F4E9687BFA9CE5E /* NextDepartureView.swift */,
+				A054AB9DDD2BA733817AA1B9 /* NextDepartureWidget.swift */,
+				46D74B6394C951035C331F37 /* SelectStopIntent.swift */,
+				0001D4D0E684DC2BA3CE8A53 /* StopSearch.swift */,
+				D7704146BB7B17B7F365A6B8 /* UnderveisWidgetBundle.swift */,
+				C233E9859BFCF4269E01BDDD /* UnderveisWidgets.macOS.entitlements */,
+			);
+			path = Widgets;
 			sourceTree = "<group>";
 		};
 		E9973224E7138D21F3B75467 /* Networking */ = {
@@ -235,10 +317,12 @@
 			buildPhases = (
 				B07BFC9B16174E1E507E40E5 /* Sources */,
 				42B44B41DCC06E16F1BD5604 /* Resources */,
+				43F20B3BE200E6869EB566EB /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A4F05AA0BF04C3B429465072 /* PBXTargetDependency */,
 			);
 			name = Underveis;
 			packageProductDependencies = (
@@ -246,6 +330,23 @@
 			productName = Underveis;
 			productReference = B570F1B7175E6952D53A8C9A /* Underveis.app */;
 			productType = "com.apple.product-type.application";
+		};
+		CBA50A1DE39CE16EF188F126 /* UnderveisWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F18239931833081556093874 /* Build configuration list for PBXNativeTarget "UnderveisWidgets" */;
+			buildPhases = (
+				F34374EBD5EDC872F57A59F8 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UnderveisWidgets;
+			packageProductDependencies = (
+			);
+			productName = UnderveisWidgets;
+			productReference = 3D0EAC64E1E97A39914A7A28 /* UnderveisWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -257,6 +358,10 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					97BC13EC340B9E1F4C14072A = {
+						DevelopmentTeam = 9QD8BJRLPC;
+						ProvisioningStyle = Automatic;
+					};
+					CBA50A1DE39CE16EF188F126 = {
 						DevelopmentTeam = 9QD8BJRLPC;
 						ProvisioningStyle = Automatic;
 					};
@@ -277,6 +382,7 @@
 			projectRoot = "";
 			targets = (
 				97BC13EC340B9E1F4C14072A /* Underveis */,
+				CBA50A1DE39CE16EF188F126 /* UnderveisWidgets */,
 			);
 		};
 /* End PBXProject section */
@@ -303,14 +409,17 @@
 				ECDC9DA9EDF8182BCC2F2183 /* Color+Mode.swift in Sources */,
 				0171217B408508039B676AA1 /* Coordinate.swift in Sources */,
 				5BAA202E3B57A3E2EBB84D1A /* Departure.swift in Sources */,
+				A9C6C2BE10E2F863BBF76CF8 /* DepartureActivityAttributes.swift in Sources */,
 				42B155F9EFA1BD269FB47D36 /* DepartureFormatting.swift in Sources */,
 				4C8D1FC4B3D6AE9B4A0F851B /* DeparturesModel.swift in Sources */,
+				3F4E0E24FB0B35E195DF0F56 /* DeparturesProvider.swift in Sources */,
 				6FAFF3E7D8BA0155B5D8BFA6 /* EnturVehiclesClient.swift in Sources */,
 				B61561906240001E98F87FBD /* GraphQLTransportWS.swift in Sources */,
 				05ADA8016D8A86ABE2DF6274 /* JourneyDetail.swift in Sources */,
 				6E0B7C961D28FFFC440FB49A /* JourneyModel.swift in Sources */,
 				9080966C4C47C87BF393C29F /* JourneyPlannerClient.swift in Sources */,
 				4C5C705A1C3F4C1D88CB1777 /* LineColorStore.swift in Sources */,
+				90BE4446E57977CD118B36AA /* LiveActivityController.swift in Sources */,
 				863576A9F19780CB3B34D29B /* LocationProvider.swift in Sources */,
 				6AE7F481935CBB16AE51015B /* ModeFilterView.swift in Sources */,
 				E174F2A714BF085877260750 /* NearbyModel.swift in Sources */,
@@ -338,9 +447,58 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F34374EBD5EDC872F57A59F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				776B541EDF87FFC05D821658 /* Color+Hex.swift in Sources */,
+				FCFD0618FC66851E7DAC19BA /* Departure.swift in Sources */,
+				79746278979541A5A1959564 /* DepartureActivityAttributes.swift in Sources */,
+				420113E0682F69C615FA9E00 /* DepartureActivityWidget.swift in Sources */,
+				39A67548668B895E06BC665A /* DepartureFormatting.swift in Sources */,
+				932F84EB8C4E04CE3AC8C767 /* DeparturesProvider.swift in Sources */,
+				9E4FE6C183F2E5DD159774FD /* NextDepartureProvider.swift in Sources */,
+				B385169BE2230EFB77F1172C /* NextDepartureView.swift in Sources */,
+				6BB7048E75A5B44D2D5E7532 /* NextDepartureWidget.swift in Sources */,
+				420C1044CAD3497E18559C14 /* SelectStopIntent.swift in Sources */,
+				69A03CF63547C9F5073ADEE0 /* StopSearch.swift in Sources */,
+				C631A917D2708BBB8625F17E /* UnderveisWidgetBundle.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A4F05AA0BF04C3B429465072 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CBA50A1DE39CE16EF188F126 /* UnderveisWidgets */;
+			targetProxy = 018194EC467570130071C91D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		0AC40D7F0CE5CAEC6FD7B000 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = Widgets/UnderveisWidgets.macOS.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = no.espenbye.underveis.widgets;
+				PRODUCT_NAME = UnderveisWidgets;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
 		3AD5458355B956111B180CDF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -448,6 +606,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Underveis viser kollektivtrafikk i nærheten av deg på kartet.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -522,6 +681,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Underveis viser kollektivtrafikk i nærheten av deg på kartet.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -537,6 +697,28 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		E12EF5C43514A9B8AD0EE1A7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				"CODE_SIGN_ENTITLEMENTS[sdk=macosx*]" = Widgets/UnderveisWidgets.macOS.entitlements;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Widgets/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = no.espenbye.underveis.widgets;
+				PRODUCT_NAME = UnderveisWidgets;
+				SDKROOT = auto;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -557,6 +739,15 @@
 			buildConfigurations = (
 				3AD5458355B956111B180CDF /* Debug */,
 				4A991D3F1FC1202703415721 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F18239931833081556093874 /* Build configuration list for PBXNativeTarget "UnderveisWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0AC40D7F0CE5CAEC6FD7B000 /* Debug */,
+				E12EF5C43514A9B8AD0EE1A7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
