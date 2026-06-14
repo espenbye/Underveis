@@ -48,6 +48,12 @@ final class VehiclesModel {
     /// Hide stops when zoomed out wider than this (degrees latitude) — they'd be too dense to read.
     private static let stopsMaxSpan = 0.06
 
+    /// UserDefaults keys backing the persisted Filtre selection (so it survives relaunch — only
+    /// `mapStyle` did before). `VehiclesModel` isn't a View, so it reads/writes UserDefaults directly
+    /// rather than via `@AppStorage`.
+    private static let enabledModesKey = "enabledModes"
+    private static let showStopsKey = "showStops"
+
     // Easing tuned for ~30 fps: a fraction of the remaining distance closed each frame, settling in
     // roughly half a second while staying smooth.
     private static let frameInterval: Duration = .milliseconds(33)
@@ -65,6 +71,16 @@ final class VehiclesModel {
         self.personalization = personalization
         self.client = client
         self.journeyPlanner = journeyPlanner
+
+        // Restore the last Filtre selection; fall back to the property defaults ([.bus] / stops on).
+        let defaults = UserDefaults.standard
+        if let raw = defaults.array(forKey: Self.enabledModesKey) as? [String] {
+            let restored = Set(raw.compactMap(VehicleMode.init(rawValue:)))
+            if !restored.isEmpty { enabledModes = restored }
+        }
+        if defaults.object(forKey: Self.showStopsKey) != nil {
+            showStops = defaults.bool(forKey: Self.showStopsKey)
+        }
     }
 
     /// Vehicles to draw — see `isVisible(_:)`.
@@ -154,6 +170,7 @@ final class VehiclesModel {
 
     func setShowStops(_ enabled: Bool) {
         showStops = enabled
+        UserDefaults.standard.set(enabled, forKey: Self.showStopsKey)
         if let box = currentBox {
             refreshStops(for: box)
         }
@@ -183,6 +200,7 @@ final class VehiclesModel {
         } else {
             enabledModes.remove(mode)
         }
+        UserDefaults.standard.set(enabledModes.map(\.rawValue), forKey: Self.enabledModesKey)
         rescope()
     }
 
@@ -230,6 +248,24 @@ final class VehiclesModel {
             await client.setViewport(box, mode: subscriptionMode)
             merge(await client.snapshot(box: box, mode: subscriptionMode))
         }
+    }
+
+    // MARK: - Reset
+
+    /// Full factory reset behind the Innstillinger "Nullstill appen" action. Clears all saved data
+    /// (favourites/recents/watched + the line-colour cache), returns the Filtre selection to its
+    /// defaults, and re-scopes the live feed so now-unwatched vehicles leave the map. The `mapStyle`
+    /// preference is owned by the UI layer (`SettingsView`), which resets it separately.
+    func resetApp() {
+        personalization.clearAll()
+        lineColors.clearAll()
+        enabledModes = [.bus]
+        showStops = true
+        let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: Self.enabledModesKey)
+        defaults.removeObject(forKey: Self.showStopsKey)
+        rescope()
+        if let box = currentBox { refreshStops(for: box) }
     }
 
     // MARK: - Merging / interpolation / eviction

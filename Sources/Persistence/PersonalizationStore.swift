@@ -127,6 +127,20 @@ final class PersonalizationStore {
         Task { [writer] in await writer.recordRecentLine(saved, cap: cap) }
     }
 
+    // MARK: - Reset
+
+    /// Wipes all personalization — favourites, recents, and watched lines — both in memory and on
+    /// disk. Callers that depend on watched lines for the live feed (`VehiclesModel`) must re-scope
+    /// afterwards, since this clears `watchedLineRefs`/`watchedModes`.
+    func clearAll() {
+        favoriteStops = []
+        recentStops = []
+        watchedLines = []
+        recentLines = []
+        rebuildWatchedDerived()
+        Task { [writer] in await writer.deleteAll() }
+    }
+
     // MARK: - Internals
 
     private func rebuildWatchedDerived() {
@@ -373,6 +387,16 @@ actor PersonalizationWriter {
         }
         try? modelContext.save()
         prune(RecentLine.self, sortBy: SortDescriptor(\.viewedAt, order: .reverse), cap: cap)
+    }
+
+    /// Deletes every persisted personalization row across all four models. Backs
+    /// `PersonalizationStore.clearAll()` (the "Nullstill appen" reset).
+    func deleteAll() {
+        try? modelContext.delete(model: FavoriteStop.self)
+        try? modelContext.delete(model: RecentStop.self)
+        try? modelContext.delete(model: WatchedLine.self)
+        try? modelContext.delete(model: RecentLine.self)
+        try? modelContext.save()
     }
 
     /// Deletes the oldest rows beyond `cap`, keeping the most recent `cap` by `sortBy`.

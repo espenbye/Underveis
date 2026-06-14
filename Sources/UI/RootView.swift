@@ -27,6 +27,8 @@ struct RootView: View {
     @State private var primedStop: Stop?
     @State private var isFollowing = false
     @State private var showFilters = false
+    /// iOS/iPadOS only — presents Innstillinger as a sheet (macOS uses the Settings scene / ⌘,).
+    @State private var showSettings = false
     /// Which top-level tab is showing. Browse tabs switch this back to `.map` after a selection.
     @State private var selectedTab: AppTab = .map
     @State private var hasCentered = false
@@ -204,6 +206,19 @@ struct RootView: View {
                         .presentationDragIndicator(.visible)
                 }
             #endif
+            #if os(iOS)
+                .sheet(isPresented: $showSettings) {
+                    NavigationStack {
+                        SettingsView(model: model)
+                            .toolbar {
+                                ToolbarItem(placement: .confirmationAction) {
+                                    Button("Ferdig") { showSettings = false }
+                                }
+                            }
+                    }
+                    .presentationDetents([.large])
+                }
+            #endif
         }
     }
 
@@ -239,6 +254,15 @@ struct RootView: View {
 
     @ToolbarContentBuilder
     private var toolbarContent: some ToolbarContent {
+        #if os(iOS)
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    showSettings = true
+                } label: {
+                    Label("Innstillinger", systemImage: "gearshape")
+                }
+            }
+        #endif
         ToolbarItem(placement: .primaryAction) {
             Button {
                 showFilters.toggle()

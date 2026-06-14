@@ -25,6 +25,16 @@ struct UnderveisApp: App {
             .windowResizability(.contentSize)
             .defaultSize(width: 1100, height: 760)
         #endif
+
+        // macOS reaches Innstillinger through the standard Settings scene (⌘,); iOS/iPadOS uses a
+        // gear → sheet from the Kart tab (see RootView). Both reuse the same `SettingsView`.
+        #if os(macOS)
+            Settings {
+                SettingsView(model: model)
+                    .frame(width: 420)
+            }
+            .modelContainer(container)
+        #endif
     }
 
     /// Prefer an on-disk store; fall back to in-memory so a corrupt store never blocks launch.

@@ -101,6 +101,19 @@ final class LineColorStore {
         await writer.upsert(results)
     }
 
+    // MARK: - Reset
+
+    /// Drops the entire colour cache — in memory and on disk. Markers fall back to their mode tint
+    /// until `enrich(_:)` re-resolves them from live vehicle updates. Backs the "Nullstill appen" reset.
+    func clearAll() {
+        flushTask?.cancel()
+        flushTask = nil
+        resolved.removeAll()
+        pending.removeAll()
+        requested.removeAll()
+        Task { [writer] in await writer.deleteAll() }
+    }
+
     private func hydrateFromDisk() {
         let descriptor = FetchDescriptor<CachedLine>()
         guard let lines = try? container.mainContext.fetch(descriptor) else { return }
@@ -145,6 +158,12 @@ actor LineCacheWriter {
                 )
             }
         }
+        try? modelContext.save()
+    }
+
+    /// Deletes every cached line colour. Backs `LineColorStore.clearAll()`.
+    func deleteAll() {
+        try? modelContext.delete(model: CachedLine.self)
         try? modelContext.save()
     }
 }
