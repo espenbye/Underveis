@@ -4,15 +4,26 @@ A universal **SwiftUI + MapKit** app for iPhone and Mac that shows Norwegian pub
 vehicles moving in realtime, streamed from [Entur](https://developer.entur.org)'s open
 real-time vehicle API.
 
+![Underveis on macOS: following bus 5 through Stavanger with its route, Look Around preview, and stop list](docs/screenshot-mac.jpg)
+
+## Features
+
 - **Live positions** via Entur's GraphQL-over-WebSocket subscription (`graphql-transport-ws`),
   with smooth marker interpolation between updates.
 - **Viewport-scoped**: only vehicles inside the visible map area are subscribed, using Entur's
   server-side `boundingBox` + `mode` filtering.
-- **All transit modes** with a filter (defaults to buses).
+- **All transit modes** with an on-map filter (defaults to buses).
+- **Follow mode**: tap a vehicle to track it as it moves; the camera keeps it centred.
+- **Journey view**: the followed vehicle's full route is drawn on the map, with every stop and its
+  live call time, delay status, and onboard occupancy.
+- **Ride along**: an Apple Look Around street-level preview that advances with the vehicle.
 - **Transit stops** from the National Stop Register, with a **live departures board** — tap a stop
   for real-time departures and countdowns that tick every second.
-- **Follow mode**: tap a vehicle to track it as it moves; the camera keeps it centred.
-- **Real line colours** enriched from the Entur Journey Planner v3 API and cached with **SwiftData**.
+- **Nær meg**: the nearest stops around you with their next departures.
+- **Saved**: favourite stops, watched lines (always shown regardless of the mode filter), and recents,
+  persisted with **SwiftData**.
+- **Departure reminders**: a local notification a chosen number of minutes before a departure.
+- **Real line colours** enriched from the Entur Journey Planner v3 API and cached with SwiftData.
 - **Swift 6** strict concurrency throughout.
 
 ## Requirements
@@ -62,12 +73,17 @@ immutable `Sendable` value types that cross it.
 | Layer                  | Type                     | Responsibility                                                                                                |
 | ---------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------- |
 | `EnturVehiclesClient`  | `actor`                  | Owns the WebSocket, speaks `graphql-transport-ws`, re-subscribes on viewport change, reconnects with backoff. |
-| `JourneyPlannerClient` | `actor`                  | HTTP Journey Planner v3 lookups: line colours, stop places in a bounding box, and a stop's departures.        |
+| `JourneyPlannerClient` | `actor`                  | HTTP Journey Planner v3 lookups: line colours, stop places in a bounding box, departures, and full journeys.  |
 | `LineColorStore`       | `@MainActor @Observable` | Resolves line → colour, caches results in SwiftData (`CachedLine`) via a background `LineCacheWriter`.        |
+| `PersonalizationStore` | `@MainActor @Observable` | Favourite stops, watched lines, and recents; in-memory snapshots persisted via a background SwiftData writer. |
 | `VehiclesModel`        | `@MainActor @Observable` | Holds the live vehicle + stop sets, debounces the viewport, applies the mode filter, evicts stale vehicles.   |
+| `JourneyModel`         | `@MainActor @Observable` | Loads the followed vehicle's route and calls, re-polls call times, and ticks the countdowns.                  |
 | `DeparturesModel`      | `@MainActor @Observable` | Polls the selected stop's departures and runs a 1 Hz ticker so countdowns stay live between fetches.          |
-| `LocationProvider`     | `@MainActor @Observable` | Core Location wrapper for the initial camera.                                                                 |
-| `VehicleMapView` / UI  | SwiftUI                  | `Map` with a marker per vehicle and stop; wide-zoom clustering, follow mode, status pill, filter popover, and detail inspector. |
+| `NearbyModel`          | `@MainActor @Observable` | Finds stops around the user's location and previews their next departures.                                    |
+| `RideAlongModel`       | `@MainActor @Observable` | Fetches the Look Around scene at the followed vehicle's position, throttled by distance travelled.            |
+| `ReminderStore`        | `@MainActor @Observable` | Schedules departure reminders as local notifications; pending notifications are the source of truth.          |
+| `LocationProvider`     | `@MainActor @Observable` | Core Location wrapper for the initial camera and Nær meg.                                                     |
+| `VehicleMapView` / UI  | SwiftUI                  | `Map` with a marker per vehicle and stop; clustering, follow mode, route line, filter popover, detail inspector. |
 
 No API key is required; all requests identify themselves with the `ET-Client-Name` header.
 
