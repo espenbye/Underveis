@@ -24,6 +24,7 @@
 		53C321D5BE3E83C2BEE320A2 /* CachedLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF1308D34BC170809B4BB70 /* CachedLine.swift */; };
 		5BAA202E3B57A3E2EBB84D1A /* Departure.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140F8527BB9C0D8F9FCF130C /* Departure.swift */; };
 		627BD311D230CB1E5270EEEE /* PersonalizationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A84CA4D7C457C8F3C4C16B60 /* PersonalizationStore.swift */; };
+		63709D1138AEF3A1DAFEA395 /* EnturClientName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66D02F7974CCAE1EA67DD99A /* EnturClientName.swift */; };
 		66B3E8FEC3DBC1AC75DD4A15 /* VehiclesQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B91FEBCFA4CA4C93AE7C4F43 /* VehiclesQuery.swift */; };
 		6AE7F481935CBB16AE51015B /* ModeFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8860AC6AE20374633D06DA5 /* ModeFilterView.swift */; };
 		6E0B7C961D28FFFC440FB49A /* JourneyModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72B206E00AF017F35FFF0A4D /* JourneyModel.swift */; };
@@ -68,6 +69,7 @@
 		4DF1308D34BC170809B4BB70 /* CachedLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CachedLine.swift; sourceTree = "<group>"; };
 		5631C98D491D0185CE0AB72D /* StopMarker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopMarker.swift; sourceTree = "<group>"; };
 		60B8A75CFE1EAF475547D09B /* Color+Hex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Hex.swift"; sourceTree = "<group>"; };
+		66D02F7974CCAE1EA67DD99A /* EnturClientName.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnturClientName.swift; sourceTree = "<group>"; };
 		6DDFDB8DFF5877F180638D50 /* DeparturesModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeparturesModel.swift; sourceTree = "<group>"; };
 		6E7878F97A231438F93E79A8 /* RideAlongModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RideAlongModel.swift; sourceTree = "<group>"; };
 		6EF49E1EF441D9E6A2D1EEF9 /* Color+Mode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Mode.swift"; sourceTree = "<group>"; };
@@ -208,6 +210,7 @@
 		E9973224E7138D21F3B75467 /* Networking */ = {
 			isa = PBXGroup;
 			children = (
+				66D02F7974CCAE1EA67DD99A /* EnturClientName.swift */,
 				2578E05BE69CC59063A4A5E2 /* EnturVehiclesClient.swift */,
 				DCA5EC37C109487B4F37ECCC /* GraphQLTransportWS.swift */,
 				9B988EA3D67B4383AE2C61CA /* JourneyPlannerClient.swift */,
@@ -305,6 +308,7 @@
 				5BAA202E3B57A3E2EBB84D1A /* Departure.swift in Sources */,
 				42B155F9EFA1BD269FB47D36 /* DepartureFormatting.swift in Sources */,
 				4C8D1FC4B3D6AE9B4A0F851B /* DeparturesModel.swift in Sources */,
+				63709D1138AEF3A1DAFEA395 /* EnturClientName.swift in Sources */,
 				6FAFF3E7D8BA0155B5D8BFA6 /* EnturVehiclesClient.swift in Sources */,
 				B61561906240001E98F87FBD /* GraphQLTransportWS.swift in Sources */,
 				05ADA8016D8A86ABE2DF6274 /* JourneyDetail.swift in Sources */,

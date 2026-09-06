@@ -13,6 +13,9 @@ build/
 .build/
 .swiftpm/
 
+# Local developer overrides (signing team, toolchain path)
+Local.mk
+
 # Claude Code (personal, per-project overrides)
 .claude/settings.local.json
 
@@ -23,3 +26,6 @@ build/
 *.ipa
 *.dSYM.zip
 *.dSYM
+
+# Claude Code (personal project guide)
+CLAUDE.local.md

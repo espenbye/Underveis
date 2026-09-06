@@ -33,7 +33,7 @@ actor JourneyPlannerClient {
         return formatter
     }()
 
-    init(clientName: String = "espenbye-underveis", session: URLSession = .shared) {
+    init(clientName: String = EnturClientName.default, session: URLSession = .shared) {
         self.clientName = clientName
         self.session = session
     }

@@ -16,7 +16,9 @@ settings:
     DEAD_CODE_STRIPPING: YES
     ENABLE_USER_SCRIPT_SANDBOXING: YES
     STRING_CATALOG_GENERATE_SYMBOLS: YES
-    DEVELOPMENT_TEAM: 9QD8BJRLPC # "Espen Bye" (personal team)
+    # Set UNDERVEIS_TEAM in a git-ignored Local.mk (see Makefile); empty means "no team", which
+    # still builds for the Simulator and for macOS with signing disabled.
+    DEVELOPMENT_TEAM: ${UNDERVEIS_TEAM}
     CODE_SIGN_STYLE: Automatic
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
