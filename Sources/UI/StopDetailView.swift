@@ -25,10 +25,21 @@ struct StopDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                header
+                StopHeader(
+                    name: model.stopName,
+                    symbolName: model.stopSymbol,
+                    isFavorite: isFavorite,
+                    onToggleFavorite: onToggleFavorite
+                )
                 Divider()
-                content
-                footer
+                DepartureBoard(
+                    model: model,
+                    liveServiceJourneyIDs: liveServiceJourneyIDs,
+                    reminders: reminders,
+                    onSelectDeparture: onSelectDeparture,
+                    onToggleReminder: toggleReminder
+                )
+                RefreshFooter(model: model)
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,20 +63,29 @@ struct StopDetailView: View {
             if reminders.permissionDenied { showPermissionAlert = true }
         }
     }
+}
 
-    private var header: some View {
+/// Stop glyph, name, and the favourite star. Takes only the fields it renders, so the per-second
+/// departures tick never re-evaluates it.
+private struct StopHeader: View {
+    let name: String
+    let symbolName: String
+    let isFavorite: Bool
+    let onToggleFavorite: () -> Void
+
+    var body: some View {
         HStack(spacing: 14) {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(.tint)
                 .frame(width: 52, height: 52)
                 .overlay {
-                    Image(systemName: model.stopSymbol)
+                    Image(systemName: symbolName)
                         .font(.system(size: 22, weight: .semibold))
                         .foregroundStyle(.white)
                 }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(model.stopName.isEmpty ? "Holdeplass" : model.stopName)
+                Text(name.isEmpty ? "Holdeplass" : name)
                     .font(.title3.weight(.semibold))
                 Text("Avganger")
                     .font(.subheadline)
@@ -83,9 +103,18 @@ struct StopDetailView: View {
             .accessibilityLabel(isFavorite ? "Fjern fra favoritter" : "Legg til i favoritter")
         }
     }
+}
 
-    @ViewBuilder
-    private var content: some View {
+/// The departure rows (or the loading / error / empty state). This is the view that reads
+/// `model.tickID`, so the once-a-second countdown refresh is confined here.
+private struct DepartureBoard: View {
+    let model: DeparturesModel
+    let liveServiceJourneyIDs: Set<String>
+    let reminders: ReminderStore
+    let onSelectDeparture: (Departure) -> Void
+    let onToggleReminder: (Departure) -> Void
+
+    var body: some View {
         switch model.loadState {
         case .idle:
             EmptyView()
@@ -120,7 +149,7 @@ struct StopDetailView: View {
                             isLive: liveServiceJourneyIDs.contains(departure.serviceJourneyId),
                             hasReminder: reminders.isReminderSet(for: departure),
                             onTap: { onSelectDeparture(departure) },
-                            onToggleReminder: { toggleReminder(for: departure) }
+                            onToggleReminder: { onToggleReminder(departure) }
                         )
                         if departure.id != model.departures.last?.id {
                             Divider()
@@ -130,9 +159,14 @@ struct StopDetailView: View {
             }
         }
     }
+}
 
-    @ViewBuilder
-    private var footer: some View {
+/// "Oppdateres om N s" — reads `model.nextRefreshIn`, which changes every second, so it lives in its
+/// own view.
+private struct RefreshFooter: View {
+    let model: DeparturesModel
+
+    var body: some View {
         if case .loaded = model.loadState, !model.departures.isEmpty {
             Text("Oppdateres om \(model.nextRefreshIn) s")
                 .font(.caption2)
