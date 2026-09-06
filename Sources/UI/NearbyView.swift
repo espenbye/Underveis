@@ -55,13 +55,38 @@ struct NearbyView: View {
                     )
                     .frame(maxWidth: .infinity, minHeight: 260)
                 } else {
-                    list
+                    NearbyList(
+                        model: model,
+                        liveServiceJourneyIDs: liveServiceJourneyIDs,
+                        isFavorite: isFavorite,
+                        onToggleFavorite: onToggleFavorite,
+                        onSelectStop: onSelectStop
+                    )
                 }
             }
         }
     }
 
-    private var list: some View {
+    private func loading(_ title: String) -> some View {
+        HStack {
+            Spacer()
+            ProgressView(title)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity, minHeight: 260)
+    }
+}
+
+/// The stop rows. This is the view that reads `model.tickID`, so the once-a-second countdown refresh
+/// re-evaluates only this list — not the location gating or empty states in `NearbyView`.
+private struct NearbyList: View {
+    let model: NearbyModel
+    let liveServiceJourneyIDs: Set<String>
+    let isFavorite: (String) -> Bool
+    let onToggleFavorite: (Stop) -> Void
+    let onSelectStop: (Stop) -> Void
+
+    var body: some View {
         VStack(spacing: 0) {
             ForEach(model.nearby) { item in
                 NearbyStopRow(
@@ -75,15 +100,6 @@ struct NearbyView: View {
                 if item.id != model.nearby.last?.id { Divider() }
             }
         }
-    }
-
-    private func loading(_ title: String) -> some View {
-        HStack {
-            Spacer()
-            ProgressView(title)
-            Spacer()
-        }
-        .frame(maxWidth: .infinity, minHeight: 260)
     }
 }
 

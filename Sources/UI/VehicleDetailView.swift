@@ -1,7 +1,9 @@
 import MapKit
 import SwiftUI
 
-/// Details for the selected vehicle, shown in the inspector panel.
+/// Details for the selected vehicle, shown in the inspector panel. Thin composer: each section is
+/// its own `View` with narrow inputs, so the per-second `journey.tickID` bump re-evaluates only the
+/// live status card and the journey list — not the header, facts, or Look Around preview.
 struct VehicleDetailView: View {
     let vehicle: Vehicle
     let colors: LineColorStore.ResolvedColors
@@ -12,64 +14,63 @@ struct VehicleDetailView: View {
     let isWatched: Bool
     let onToggleWatch: () -> Void
 
-    /// Drives the Look Around "ride along" preview, refetching as the vehicle moves.
-    @State private var rideAlong = RideAlongModel()
-
-    #if os(iOS)
-        /// The scene shown in the full-screen ride-along viewer (nil when closed). Holding the scene
-        /// that was current at tap time lets the viewer construct with a non-nil scene; it then keeps
-        /// following via the `$rideAlong.scene` binding.
-        @State private var rideAlongFullScreen: RideAlongScene?
-    #endif
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                header
-                liveStatusCard
+                VehicleHeader(
+                    shortLabel: vehicle.shortLabel,
+                    title: vehicle.lineName ?? vehicle.mode?.title ?? "Avgang",
+                    destination: vehicle.destinationName,
+                    colors: colors,
+                    watchState: vehicle.lineRef == nil ? nil : isWatched,
+                    onToggleWatch: onToggleWatch
+                )
+                LiveStatusCard(vehicle: vehicle, journey: journey)
                 Divider()
-                rideAlongSection
+                RideAlongSection(
+                    vehicleID: vehicle.id,
+                    latitude: vehicle.latitude,
+                    longitude: vehicle.longitude,
+                    bearing: vehicle.bearing,
+                    label: vehicle.lineName ?? vehicle.shortLabel
+                )
                 Divider()
-                facts
+                VehicleFacts(
+                    originName: vehicle.originName,
+                    destinationName: vehicle.destinationName,
+                    mode: vehicle.mode,
+                    delay: vehicle.delay,
+                    speed: vehicle.speed,
+                    lastUpdated: vehicle.lastUpdated
+                )
                 if vehicle.serviceJourneyId != nil {
                     Divider()
-                    journeySection
+                    JourneySection(vehicle: vehicle, journey: journey, tint: colors.tint)
                 }
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        // Fetch on first appearance and reset + refetch when the selection switches vehicles.
-        .task(id: vehicle.id) {
-            rideAlong.reset()
-            rideAlong.update(to: vehicle.coordinate, bearing: vehicle.bearing)
-        }
-        // Track the vehicle as it moves (throttled inside the model, which derives the view direction
-        // from movement). `CLLocationCoordinate2D` isn't `Equatable`, so key the change on a
-        // lightweight position string like `RootView.followKey` does.
-        .onChange(of: "\(vehicle.latitude),\(vehicle.longitude)") {
-            rideAlong.update(to: vehicle.coordinate, bearing: vehicle.bearing)
-        }
-        #if os(iOS)
-            // Our own full-screen viewer, so it keeps following the vehicle (the built-in
-            // `LookAroundPreview` viewer can't be driven once it's open).
-            .fullScreenCover(item: $rideAlongFullScreen) { item in
-                RideAlongFullScreenView(
-                    initialScene: item.scene,
-                    scene: $rideAlong.scene,
-                    label: vehicle.lineName ?? vehicle.shortLabel
-                )
-            }
-        #endif
     }
+}
 
-    private var header: some View {
+/// Line badge, line name, destination, and the optional watch star.
+private struct VehicleHeader: View {
+    let shortLabel: String
+    let title: String
+    let destination: String?
+    let colors: LineColorStore.ResolvedColors
+    /// `nil` hides the star (no line to watch); otherwise whether the line is watched.
+    let watchState: Bool?
+    let onToggleWatch: () -> Void
+
+    var body: some View {
         HStack(spacing: 14) {
             RoundedRectangle(cornerRadius: 10, style: .continuous)
                 .fill(colors.tint)
                 .frame(width: 52, height: 52)
                 .overlay {
-                    Text(vehicle.shortLabel)
+                    Text(shortLabel)
                         .font(.system(size: 20, weight: .heavy, design: .rounded))
                         .foregroundStyle(colors.label)
                         .minimumScaleFactor(0.5)
@@ -77,16 +78,16 @@ struct VehicleDetailView: View {
                 }
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(vehicle.lineName ?? vehicle.mode?.title ?? "Avgang")
+                Text(title)
                     .font(.title3.weight(.semibold))
-                if let destination = vehicle.destinationName {
+                if let destination {
                     Text(destination)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
             }
 
-            if vehicle.lineRef != nil {
+            if let isWatched = watchState {
                 Spacer(minLength: 8)
 
                 Button(action: onToggleWatch) {
@@ -99,13 +100,17 @@ struct VehicleDetailView: View {
             }
         }
     }
+}
 
-    /// An at-a-glance "live status" strip: deviation from timetable, the next stop with a live ETA,
-    /// onboard crowding, and a traffic-congestion flag — whichever the feed currently provides. Hidden
-    /// entirely when none are known. Reading `journey.tickID` keeps the next-stop ETA counting down
-    /// between polls.
-    @ViewBuilder
-    private var liveStatusCard: some View {
+/// An at-a-glance "live status" strip: deviation from timetable, the next stop with a live ETA,
+/// onboard crowding, and a traffic-congestion flag — whichever the feed currently provides. Hidden
+/// entirely when none are known. Reading `journey.tickID` keeps the next-stop ETA counting down
+/// between polls; that dependency is confined to this view.
+private struct LiveStatusCard: View {
+    let vehicle: Vehicle
+    let journey: JourneyModel
+
+    var body: some View {
         let _ = journey.tickID
         let nextCall = vehicle.serviceJourneyId != nil ? journey.nextCall(for: vehicle) : nil
         let inCongestion = vehicle.inCongestion == true
@@ -176,10 +181,34 @@ struct VehicleDetailView: View {
         default: .red
         }
     }
+}
 
-    /// Street-level Look Around preview at the vehicle's live position — the "ride along" view.
-    @ViewBuilder
-    private var rideAlongSection: some View {
+/// Street-level Look Around preview at the vehicle's live position — the "ride along" view. Owns the
+/// `RideAlongModel` and refetches as the vehicle moves; takes only the position fields so it is
+/// untouched by the journey tick and by unrelated vehicle field changes.
+private struct RideAlongSection: View {
+    let vehicleID: String
+    let latitude: Double
+    let longitude: Double
+    let bearing: Double?
+    /// Title shown in the full-screen viewer.
+    let label: String
+
+    /// Drives the Look Around "ride along" preview, refetching as the vehicle moves.
+    @State private var rideAlong = RideAlongModel()
+
+    #if os(iOS)
+        /// The scene shown in the full-screen ride-along viewer (nil when closed). Holding the scene
+        /// that was current at tap time lets the viewer construct with a non-nil scene; it then keeps
+        /// following via the `$rideAlong.scene` binding.
+        @State private var rideAlongFullScreen: RideAlongScene?
+    #endif
+
+    private var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Se deg omkring", systemImage: "binoculars")
                 .font(.subheadline.weight(.semibold))
@@ -199,6 +228,28 @@ struct VehicleDetailView: View {
             .frame(maxWidth: .infinity)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
         }
+        // Fetch on first appearance and reset + refetch when the selection switches vehicles.
+        .task(id: vehicleID) {
+            rideAlong.reset()
+            rideAlong.update(to: coordinate, bearing: bearing)
+        }
+        // Track the vehicle as it moves (throttled inside the model, which derives the view direction
+        // from movement). `CLLocationCoordinate2D` isn't `Equatable`, so key the change on a
+        // lightweight position string like `RootView.followKey` does.
+        .onChange(of: "\(latitude),\(longitude)") {
+            rideAlong.update(to: coordinate, bearing: bearing)
+        }
+        #if os(iOS)
+            // Our own full-screen viewer, so it keeps following the vehicle (the built-in
+            // `LookAroundPreview` viewer can't be driven once it's open).
+            .fullScreenCover(item: $rideAlongFullScreen) { item in
+                RideAlongFullScreenView(
+                    initialScene: item.scene,
+                    scene: $rideAlong.scene,
+                    label: label
+                )
+            }
+        #endif
     }
 
     /// The inline thumbnail. On iOS it opens our own tracking full-screen viewer; on macOS the
@@ -239,23 +290,33 @@ struct VehicleDetailView: View {
             }
         }
     }
+}
 
-    private var facts: some View {
+/// Static-ish facts about the vehicle: route, type, deviation, speed, last update.
+private struct VehicleFacts: View {
+    let originName: String?
+    let destinationName: String?
+    let mode: VehicleMode?
+    let delay: Double?
+    let speed: Double?
+    let lastUpdated: Date?
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            if let origin = vehicle.originName, let destination = vehicle.destinationName {
-                fact("Rute", "\(origin) → \(destination)", systemImage: "arrow.right")
+            if let originName, let destinationName {
+                fact("Rute", "\(originName) → \(destinationName)", systemImage: "arrow.right")
             }
-            if let mode = vehicle.mode {
+            if let mode {
                 fact("Type", mode.title, systemImage: mode.symbolName)
             }
-            if let delay = vehicle.delay {
+            if let delay {
                 fact("Avvik", delayText(delay), systemImage: "clock")
             }
-            if let speed = vehicle.speed {
+            if let speed {
                 fact("Fart", String(format: "%.0f km/t", speed * 3.6), systemImage: "speedometer")
             }
-            if let updated = vehicle.lastUpdated {
-                fact("Oppdatert", updated.formatted(date: .omitted, time: .standard), systemImage: "dot.radiowaves.left.and.right")
+            if let lastUpdated {
+                fact("Oppdatert", lastUpdated.formatted(date: .omitted, time: .standard), systemImage: "dot.radiowaves.left.and.right")
             }
         }
     }
@@ -279,21 +340,26 @@ struct VehicleDetailView: View {
         if minutes == 0 { return "I rute" }
         return minutes > 0 ? "\(minutes) min forsinket" : "\(-minutes) min før rute"
     }
+}
 
-    /// The stop-by-stop list for the journey: passed stops dim, the next stop is highlighted, and the
-    /// rest show their expected arrival. `journey.tickID` keeps the countdowns live between polls.
-    @ViewBuilder
-    private var journeySection: some View {
+/// The stop-by-stop list for the journey: passed stops dim, the next stop is highlighted, and the
+/// rest show their expected arrival. `journey.tickID` keeps the countdowns live between polls.
+private struct JourneySection: View {
+    let vehicle: Vehicle
+    let journey: JourneyModel
+    let tint: Color
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Label("Stopp på ruten", systemImage: "point.topleft.down.to.point.bottomright.curvepath")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.secondary)
-            journeyContent
+            content
         }
     }
 
     @ViewBuilder
-    private var journeyContent: some View {
+    private var content: some View {
         switch journey.loadState {
         case .idle, .loading:
             HStack {
@@ -317,11 +383,11 @@ struct VehicleDetailView: View {
                 let calls = journey.calls
                 let statuses = journey.statuses(for: vehicle)
                 VStack(spacing: 0) {
-                    ForEach(Array(calls.enumerated()), id: \.element.id) { index, call in
+                    ForEach(calls.enumerated(), id: \.element.id) { index, call in
                         JourneyCallRow(
                             call: call,
                             status: statuses[call.id] ?? .upcoming,
-                            tint: colors.tint,
+                            tint: tint,
                             tickID: journey.tickID,
                             isFirst: index == 0,
                             isLast: index == calls.count - 1
