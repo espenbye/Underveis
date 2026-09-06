@@ -1,8 +1,15 @@
 # Underveis — developer workflow
-# Uses the Xcode 27 beta toolchain without changing the system-wide xcode-select.
+# Personal overrides (signing team, toolchain path) live in a git-ignored Local.mk:
+#   UNDERVEIS_TEAM=ABCDE12345
+#   DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+-include Local.mk
 
-DEVELOPER_DIR ?= /Applications/Xcode-27.0.0-beta.app/Contents/Developer
-export DEVELOPER_DIR
+# Prefer the Xcode 27 beta when installed, otherwise whatever xcode-select points at (must be a
+# full Xcode, not the Command Line Tools).
+XCODE_BETA := /Applications/Xcode-27.0.0-beta.app/Contents/Developer
+DEVELOPER_DIR ?= $(if $(wildcard $(XCODE_BETA)),$(XCODE_BETA),$(shell xcode-select -p))
+UNDERVEIS_TEAM ?=
+export DEVELOPER_DIR UNDERVEIS_TEAM
 
 PROJECT  := Underveis.xcodeproj
 SCHEME   := Underveis

@@ -35,7 +35,7 @@ actor EnturVehiclesClient {
     let status: AsyncStream<ConnectionStatus>
     private let statusContinuation: AsyncStream<ConnectionStatus>.Continuation
 
-    init(clientName: String = "espenbye-underveis", session: URLSession = .shared) {
+    init(clientName: String = EnturClientName.default, session: URLSession = .shared) {
         self.clientName = clientName
         self.session = session
         (updates, updatesContinuation) = AsyncStream.makeStream()
